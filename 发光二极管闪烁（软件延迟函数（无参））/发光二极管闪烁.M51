@@ -1,0 +1,86 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/15/2021  20:45:12  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL UVISION 4 C51版\C51\BIN\BL51.EXE LED.obj TO 发光二极管闪烁
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  LED.obj (LED)
+  D:\KEIL UVISION 4 C51版\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  发光二极管闪烁 (LED)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     000FH     UNIT         ?PR?DELAY?LED
+            CODE    0012H     000CH     UNIT         ?PR?MAIN?LED
+            CODE    001EH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   发光二极管闪烁 (LED)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?LED
+
+?PR?MAIN?LED
+  +--> ?PR?DELAY?LED
+
+
+
+SYMBOL TABLE OF MODULE:  发光二极管闪烁 (LED)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LED
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:0003H         PUBLIC        delay
+  C:0012H         PUBLIC        main
+  B:0090H.0       PUBLIC        LED
+  -------         PROC          MAIN
+  C:0012H         LINE#         7
+  C:0012H         LINE#         8
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/15/2021  20:45:12  PAGE 2
+
+
+  C:0012H         LINE#         9
+  C:0012H         LINE#         10
+  C:0012H         LINE#         11
+  C:0014H         LINE#         12
+  C:0017H         LINE#         13
+  C:0019H         LINE#         14
+  C:001CH         LINE#         15
+  -------         ENDPROC       MAIN
+  -------         PROC          DELAY
+  -------         DO            
+  D:0006H         SYMBOL        ms
+  -------         ENDDO         
+  C:0003H         LINE#         18
+  C:0003H         LINE#         19
+  C:0003H         LINE#         20
+  C:0007H         LINE#         21
+  C:0011H         LINE#         22
+  -------         ENDPROC       DELAY
+  -------         ENDMOD        LED
+
+Program Size: data=9.0 xdata=0 code=42
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

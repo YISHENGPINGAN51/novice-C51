@@ -1,0 +1,32 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\自学\Keil uVision 4 C51版_FYL\发光二极管闪烁（软件延迟函数（无参））\发光二极管闪烁.uvproj
+Project File Date:  03/15/2021
+
+<h2>Output:</h2>
+Build target '目标 1'
+compiling LED.c...
+LED.C(3): error C202: 'p1': undefined identifier
+LED.C(11): error C202: 'led': undefined identifier
+LED.C(13): error C202: 'led': undefined identifier
+目标未创建
+Build target '目标 1'
+compiling LED.c...
+LED.C(3): error C202: 'p1': undefined identifier
+LED.C(11): error C202: 'led': undefined identifier
+LED.C(13): error C202: 'led': undefined identifier
+目标未创建
+Build target '目标 1'
+compiling LED.c...
+LED.C(3): error C202: 'p1': undefined identifier
+LED.C(11): error C202: 'led': undefined identifier
+LED.C(13): error C202: 'led': undefined identifier
+目标未创建
+Build target '目标 1'
+compiling LED.c...
+LED.C(22): warning C206: '_nop_': missing function-prototype
+LED.C(22): error C264: intrinsic '_nop_': declaration/activation error
+目标未创建
