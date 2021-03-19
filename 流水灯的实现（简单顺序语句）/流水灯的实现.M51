@@ -1,0 +1,103 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/19/2021  01:57:21  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL UVISION 4 C51版\C51\BIN\BL51.EXE LED.obj TO 流水灯的实现
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  LED.obj (LED)
+  D:\KEIL UVISION 4 C51版\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  流水灯的实现 (LED)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0032H     UNIT         ?PR?MAIN?LED
+            CODE    0035H     0022H     UNIT         ?PR?_DELAYXMS?LED
+            CODE    0057H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   流水灯的实现 (LED)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?LED
+
+?PR?MAIN?LED
+  +--> ?PR?_DELAYXMS?LED
+
+
+
+SYMBOL TABLE OF MODULE:  流水灯的实现 (LED)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LED
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:0003H         PUBLIC        main
+  C:0039H         PUBLIC        _DelayXms
+  -------         PROC          MAIN
+  C:0003H         LINE#         13
+  C:0003H         LINE#         14
+  C:0003H         LINE#         15
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/19/2021  01:57:21  PAGE 2
+
+
+  C:0003H         LINE#         16
+  C:0003H         LINE#         17
+  C:0006H         LINE#         18
+  C:0009H         LINE#         19
+  C:000CH         LINE#         20
+  C:000FH         LINE#         21
+  C:0012H         LINE#         22
+  C:0015H         LINE#         23
+  C:0018H         LINE#         24
+  C:001BH         LINE#         25
+  C:001EH         LINE#         26
+  C:0021H         LINE#         27
+  C:0024H         LINE#         28
+  C:0027H         LINE#         29
+  C:002AH         LINE#         30
+  C:002DH         LINE#         31
+  C:0030H         LINE#         32
+  C:0033H         LINE#         33
+  -------         ENDPROC       MAIN
+  C:0035H         SYMBOL        L?0014
+  -------         PROC          L?0013
+  -------         ENDPROC       L?0013
+  C:0035H         SYMBOL        L?0014
+  -------         PROC          _DELAYXMS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0039H         LINE#         36
+  C:0039H         LINE#         37
+  C:0039H         LINE#         39
+  C:0042H         LINE#         40
+  C:0056H         LINE#         41
+  -------         ENDPROC       _DELAYXMS
+  -------         ENDMOD        LED
+
+Program Size: data=9.0 xdata=0 code=99
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

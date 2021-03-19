@@ -1,0 +1,64 @@
+C51 COMPILER V9.01   LED                                                                   03/19/2021 01:57:20 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN LED.OBJ
+COMPILER INVOKED BY: D:\Keil uVision 4 C51版\C51\BIN\C51.EXE LED.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /******************************
+   2          功能：简单语句实现流水灯（正向）
+   3          编程人：房蕴力
+   4          时间：2021_03_19
+   5          版本：V1.0
+   6          ******************************/
+   7          
+   8          #include <reg51.h>
+   9          
+  10          //函数声明
+  11          void DelayXms(unsigned int xms);
+  12          
+  13          void main()
+  14          {
+  15   1        while(1)
+  16   1        {
+  17   2          P1 = 0xfe;  //1111 1110       
+  18   2          DelayXms(1000);
+  19   2          P1 = 0xfd;  //1111 1101       -1
+  20   2          DelayXms(1000);
+  21   2          P1 = 0xfb;  //1111 1011       -2
+  22   2          DelayXms(1000);
+  23   2          P1 = 0xf7;  //1111 0111       -4
+  24   2          DelayXms(1000);
+  25   2          P1 = 0xef;  //1110 1111       -8
+  26   2          DelayXms(1000);
+  27   2          P1 = 0xdf;  //1101 1111       -16
+  28   2          DelayXms(1000);
+  29   2          P1 = 0xbf;  //1011 1111       -32
+  30   2          DelayXms(1000);
+  31   2          P1 = 0x7f;  //1111 0111       -64
+  32   2          DelayXms(1000);
+  33   2        }
+  34   1      }
+  35          
+  36          void DelayXms(unsigned int xms)
+  37          {
+  38   1        unsigned int i, j;
+  39   1        for (i = xms; i > 0; i--)
+  40   1          for (j = 124; j > 0; j--);
+  41   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     84    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
