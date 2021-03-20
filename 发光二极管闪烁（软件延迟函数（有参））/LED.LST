@@ -1,0 +1,76 @@
+C51 COMPILER V9.01   LED                                                                   03/19/2021 09:54:46 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN LED.OBJ
+COMPILER INVOKED BY: D:\Keil uVision 4 C51版\C51\BIN\C51.EXE LED.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /****************************************
+   2          功  能：带有参数的延时函数实现小灯的闪烁
+   3          编程人：FYL
+   4          时  间；2021_03_19
+   5          版  本：V1.0
+   6          ****************************************/
+   7          
+   8          //头文件声明
+   9          #include <reg51.h>
+  10          #include <intrins.h>
+  11          
+  12          //I/O的声明
+  13          sbit LED = P1 ^ 7;
+  14          
+  15          //函数的声明
+  16          void DelayXms(unsigned int xms);
+  17          
+  18          /****************************************
+  19          函数名：main
+  20          功  能；主函数
+  21          参  数；无
+  22          返回值；无
+  23          ****************************************/
+  24          void main()
+  25          {
+  26   1        while(1)
+  27   1        {
+  28   2          LED = 0;
+  29   2          DelayXms(1000);//延时 亮一会
+  30   2          LED = 1;
+  31   2          DelayXms(1000);//延时 灭一会
+  32   2        }
+  33   1      }
+  34          
+  35          /****************************************
+  36          函数名：DelayXms
+  37          功  能；延时函数
+  38          参  数；unsigned int
+  39          返回值；无
+  40          ****************************************/
+  41          void DelayXms(unsigned int xms)
+  42          {
+  43   1        unsigned int i, j;  //0 ~ 65535  0000H ~ FFFH
+  44   1        for (i = xms; i > 0; i--)
+  45   1        {
+  46   2          for (j = 124; j > 0; j--)
+  47   2          {
+  48   3            
+  49   3          }  
+  50   2        }
+  51   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     50    ----
+C51 COMPILER V9.01   LED                                                                   03/19/2021 09:54:46 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
