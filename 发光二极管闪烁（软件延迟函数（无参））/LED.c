@@ -33,7 +33,6 @@ void Delay500ms()		//@12.000MHz
 	} while (--i);
 }
 
-
 //sbit led = p1 ^ 0;
 //
 //void delay();
