@@ -28,7 +28,7 @@ void main()
     DelayXms(1000);
     P1 = 0xbf;  //1011 1111       -32
     DelayXms(1000);
-    P1 = 0x7f;  //1111 0111       -64
+    P1 = 0x7f;  //0111 1111       -64
     DelayXms(1000);
   }
 }
