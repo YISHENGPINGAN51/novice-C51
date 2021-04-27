@@ -1,46 +1,46 @@
 /****************************************
-¹¦  ÄÜ£º´øÓÐ²ÎÊýµÄÑÓÊ±º¯ÊýÊµÏÖÐ¡µÆµÄÉÁË¸
-±à³ÌÈË£ºFYL
-Ê±  ¼ä£»2021_03_19
-°æ  ±¾£ºV1.0
+åŠŸ  èƒ½ï¼šå¸¦æœ‰å‚æ•°çš„å»¶æ—¶å‡½æ•°å®žçŽ°å°ç¯çš„é—ªçƒ
+ç¼–ç¨‹äººï¼šFYL
+æ—¶  é—´ï¼›2021_03_19
+ç‰ˆ  æœ¬ï¼šV1.0
 ****************************************/
 
-//Í·ÎÄ¼þÉùÃ÷
+//å¤´æ–‡ä»¶å£°æ˜Ž
 #include <reg51.h>
 #include <intrins.h>
 
-//I/OµÄÉùÃ÷
+//I/Oçš„å£°æ˜Ž
 sbit LED = P1 ^ 7;
 
-//º¯ÊýµÄÉùÃ÷
+//å‡½æ•°çš„å£°æ˜Ž
 void DelayXms(unsigned int xms);
 
 /****************************************
-º¯ÊýÃû£ºmain
-¹¦  ÄÜ£»Ö÷º¯Êý
-²Î  Êý£»ÎÞ
-·µ»ØÖµ£»ÎÞ
+å‡½æ•°åï¼šmain
+åŠŸ  èƒ½ï¼›ä¸»å‡½æ•°
+å‚  æ•°ï¼›æ— 
+è¿”å›žå€¼ï¼›æ— 
 ****************************************/
 void main()
 {
   while(1)
   {
     LED = 0;
-    DelayXms(1000);//ÑÓÊ± ÁÁÒ»»á
+    DelayXms(1000);//å»¶æ—¶ äº®ä¸€ä¼š
     LED = 1;
-    DelayXms(1000);//ÑÓÊ± ÃðÒ»»á
+    DelayXms(1000);//å»¶æ—¶ ç­ä¸€ä¼š
   }
 }
 
 /****************************************
-º¯ÊýÃû£ºDelayXms
-¹¦  ÄÜ£»ÑÓÊ±º¯Êý
-²Î  Êý£»unsigned int
-·µ»ØÖµ£»ÎÞ
+å‡½æ•°åï¼šDelayXms
+åŠŸ  èƒ½ï¼›å»¶æ—¶å‡½æ•°
+å‚  æ•°ï¼›unsigned int
+è¿”å›žå€¼ï¼›æ— 
 ****************************************/
 void DelayXms(unsigned int xms)
 {
-  unsigned int i, j;  //0 ~ 65535  0000H ~ FFFH
+  unsigned int i, j;  //0 ~ 65535  000H ~ FFFH
   for (i = xms; i > 0; i--)
   {
     for (j = 124; j > 0; j--)
