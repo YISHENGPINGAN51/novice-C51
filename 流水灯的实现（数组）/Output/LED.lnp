@@ -1,0 +1,4 @@
+"..\Output\delay.obj",
+"..\Output\main.obj" 
+TO "..\Output\LED" 
+PRINT("..\Listing\LED.m51")
