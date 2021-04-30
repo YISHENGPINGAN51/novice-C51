@@ -1,4 +1,0 @@
-"..\Output\main.obj",
-"..\Output\delay.obj" 
-TO "..\Output\LED" 
-PRINT("..\Listing\LED.m51")
