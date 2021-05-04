@@ -1,0 +1,16 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\github\Keil uVision 4 C51版_FYL\蜂鸣器的应用（蜂鸣器的发声）\Project\BUZZER.uvproj
+Project File Date:  05/03/2021
+
+<h2>Output:</h2>
+Build target '目标 1'
+compiling delay.c...
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=56
+creating hex file from "..\Output\BUZZER"...
+"..\Output\BUZZER" - 0 Error(s), 0 Warning(s).
