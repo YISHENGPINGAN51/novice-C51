@@ -1,0 +1,3 @@
+"..\Output\main.obj" 
+TO "..\Output\BUZZER" 
+PRINT("..\Listing\BUZZER.m51")
