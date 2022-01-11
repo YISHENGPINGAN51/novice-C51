@@ -1,0 +1,70 @@
+C51 COMPILER V9.54   MAIN                                                                  01/11/2022 23:57:58 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          
+   4          unsigned char code leddata[]={ //数码管的段码表（共阳极）
+   5                          0xC0,  //"0"
+   6                          0xF9,  //"1"
+   7                          0xA4,  //"2"
+   8                          0xB0,  //"3"
+   9                          0x99,  //"4"
+  10                          0x92,  //"5"
+  11                          0x82,  //"6"
+  12                          0xF8,  //"7"
+  13                          0x80,  //"8"
+  14                          0x90,  //"9"
+  15                          0x88,  //"A"
+  16                          0x83,  //"B"
+  17                          0xC6,  //"C"
+  18                          0xA1,  //"D"
+  19                          0x86,  //"E"
+  20                          0x8E,  //"F"
+  21                          0x89,  //"H"
+  22                          0xC7,  //"L"
+  23                          0xC8,  //"n"
+  24                          0xC1,  //"u"
+  25                          0x8C,  //"P"
+  26                          0xA3,  //"o"
+  27                          0xBF,  //"-"
+  28                          0xFF,  //熄灭
+  29           
+  30                                   };
+  31          
+  32          
+  33          void main()
+  34          {
+  35   1        unsigned char i;
+  36   1        while (1)
+  37   1        {
+  38   2          for (i = 0; i < 16; i++)
+  39   2          {
+  40   3            P2 = leddata[1];
+  41   3            DelayXms(1000);
+  42   3          }
+  43   2        }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     28    ----
+   CONSTANT SIZE    =     24    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  01/11/2022 23:57:58 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
