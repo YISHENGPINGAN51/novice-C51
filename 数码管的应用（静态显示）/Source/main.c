@@ -1,7 +1,7 @@
 #include <reg51.h>
 #include "delay.h"
 
-unsigned char code leddata[]={ //数码管的段码表（共阳极）
+unsigned char code leddata[]={ //鏁扮爜绠＄殑娈电爜琛紙鍏遍槼鏋侊級
               	0xC0,  //"0"
                 0xF9,  //"1"
                 0xA4,  //"2"
@@ -25,7 +25,7 @@ unsigned char code leddata[]={ //数码管的段码表（共阳极）
                 0x8C,  //"P"
                 0xA3,  //"o"
                 0xBF,  //"-"
-                0xFF,  //熄灭
+                0xFF,  //鐔勭伃
  
                          };
 
@@ -37,7 +37,7 @@ void main()
   {
 		for (i = 0; i < 16; i++)
 		{
-			P2 = leddata[1];
+			P2 = leddata[i];
 			DelayXms(1000);
 		}
   }
