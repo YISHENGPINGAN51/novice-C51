@@ -1,0 +1,96 @@
+C51 COMPILER V9.54   MAIN                                                                  01/12/2022 18:36:56 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          
+   4          unsigned char code leddata[]={ //数码管的段码表（共阴极）
+   5           
+   6                          0x3F,  //"0"
+   7                          0x06,  //"1"
+   8                          0x5B,  //"2"
+   9                          0x4F,  //"3"
+  10                          0x66,  //"4"
+  11                          0x6D,  //"5"
+  12                          0x7D,  //"6"
+  13                          0x07,  //"7"
+  14                          0x7F,  //"8"
+  15                          0x6F,  //"9"
+  16                          0x77,  //"A"
+  17                          0x7C,  //"B"
+  18                          0x39,  //"C"
+  19                          0x5E,  //"D"
+  20                          0x79,  //"E"
+  21                          0x71,  //"F"
+  22                          0x76,  //"H"
+  23                          0x38,  //"L"
+  24                          0x37,  //"n"
+  25                          0x3E,  //"u"
+  26                          0x73,  //"P"
+  27                          0x5C,  //"o"
+  28                          0x40,  //"-"
+  29                          0x00,  //熄灭
+  30           
+  31                                   };
+  32          
+  33          void main()
+  34          {
+  35   1        while(1)
+  36   1        {
+  37   2          P1 = 0xfe;//1111 1110 第一个数码管的位选打开，其他的关掉，打开第一个数码管显示功能
+  38   2          P2 = leddata[1];
+  39   2          DelayXms(1);
+  40   2          
+  41   2          P1 = 0xfd;//1111 1101 第一个数码管的位选关掉，同时打开第二个数码管的位选，其他的关掉，打开第二个数码管显
+             -示功能
+  42   2          P2 = leddata[2];
+  43   2          DelayXms(1);
+  44   2          
+  45   2          P1 = 0xfb;//1111 1011 第二个数码管的位选关掉，同时打开第三个数码管的位选，其他的关掉，打开第三个数码管显
+             -示功能
+  46   2          P2 = leddata[3];
+  47   2          DelayXms(1);
+  48   2          
+  49   2          P1 = 0xf7;//1111 0111 第三个数码管的位选关掉，同时打开第四个数码管的位选，其他的关掉，打开第四个数码管显
+             -示功能
+  50   2          P2 = leddata[4];
+  51   2          DelayXms(1);
+C51 COMPILER V9.54   MAIN                                                                  01/12/2022 18:36:56 PAGE 2   
+
+  52   2        }
+  53   1      }
+  54                                   
+  55          //void main()
+  56          //{
+  57          //  unsigned char i;
+  58          //  while (1)
+  59          //  {
+  60          //    P1 = 0xf0;
+  61          //    for (i = 0; i < 16; i++)
+  62          //    {
+  63          //      P2 = leddata[i];
+  64          //      DelayXms(1000);
+  65          //    }
+  66          //  }
+  67          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     70    ----
+   CONSTANT SIZE    =     24    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
