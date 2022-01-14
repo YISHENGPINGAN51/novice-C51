@@ -1,0 +1,71 @@
+C51 COMPILER V9.54   MAIN                                                                  01/14/2022 21:27:25 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "display.h"
+   4          
+   5          void main()
+   6          {
+   7   1        unsigned int i;// 0 - 65535
+   8   1        unsigned int num1 = 99;// 0 - 99
+   9   1        unsigned int num2 = 520;// 0 - 999
+  10   1        unsigned int num3 = 1314;// 0 - 9999
+  11   1        BootUnit();
+*** WARNING C206 IN LINE 11 OF ..\Source\main.c: 'BootUnit': missing function-prototype
+  12   1        while(1)
+  13   1        {
+  14   2          //参数1
+  15   2          LEDBuf[0] = num1 / 1000;
+  16   2          LEDBuf[1] = num1 / 100 % 10;
+  17   2          LEDBuf[2] = num1 / 10 % 10;
+  18   2          LEDBuf[3] = num1 % 10;
+  19   2          for (i = 0; i < 1900; i++)
+  20   2          {
+  21   3            Display();
+  22   3          }
+  23   2          
+  24   2          //参数2
+  25   2          LEDBuf[0] = num2 / 1000;
+  26   2          LEDBuf[1] = num2 / 100 % 10;
+  27   2          LEDBuf[2] = num2 / 10 % 10;
+  28   2          LEDBuf[3] = num2 % 10;
+  29   2          for (i = 0; i < 1900; i++)
+  30   2          {
+  31   3            Display();
+  32   3          }
+  33   2          
+  34   2          //参数3
+  35   2          LEDBuf[0] = num3 / 1000;
+  36   2          LEDBuf[1] = num3 / 100 % 10;
+  37   2          LEDBuf[2] = num3 / 10 % 10;
+  38   2          LEDBuf[3] = num3 % 10;
+  39   2          for (i = 0; i < 1900; i++)
+  40   2          {
+  41   3            Display();
+  42   3          }
+  43   2        }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    301    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       8
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  01/14/2022 21:27:25 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
