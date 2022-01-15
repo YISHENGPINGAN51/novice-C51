@@ -1,0 +1,101 @@
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 18:07:28 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Key.h"
+   3          #include <intrins.h>
+   4          
+   5          void Key_Service();
+   6          
+   7          unsigned char temp = 0xfe;// 1111 1110
+   8          
+   9          void main()
+  10          {
+  11   1        while (1)
+  12   1        {
+  13   2          Key_Service();  
+  14   2        }
+  15   1      }
+  16          
+  17          void Key_Service()
+  18          {
+  19   1        switch (Key_Scan())
+  20   1        {
+  21   2          case 0: 
+  22   2            break;
+  23   2          
+  24   2          case 1: 
+  25   2            while (1)
+  26   2            {
+  27   3              P1 = temp; 
+  28   3              temp = _crol_(temp, 1);//循环左移实现正向流水灯
+  29   3              DelayXms(200);
+  30   3              if (2 == Key_Scan())
+  31   3                break;
+  32   3            }
+  33   2            break;
+  34   2            
+  35   2          case 2: 
+  36   2            P1 = 0xff;
+  37   2            temp = 0xfe;
+  38   2            break;
+  39   2          
+  40   2          case 3: 
+  41   2            while (1)
+  42   2            {
+  43   3              P1 = temp; 
+  44   3              temp = _crol_(temp, 1);//循环左移实现正向流水灯
+  45   3              DelayXms(200);
+  46   3              if (2 == Key_Scan())
+  47   3                break;
+  48   3            }
+  49   2            break;
+  50   2            
+  51   2          case 4: 
+  52   2            while (1)
+  53   2            {
+  54   3              P1 = temp; 
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 18:07:28 PAGE 2   
+
+  55   3              temp = _cror_(temp, 1);//循环右移实现负向流水灯
+  56   3              DelayXms(200);
+  57   3              if (2 == Key_Scan())
+  58   3                break;
+  59   3            }
+  60   2            break;
+  61   2            
+  62   2          default: break;
+  63   2        }
+  64   1      }
+  65          
+  66          //void main()
+  67          //{
+  68          //  while (1)
+  69          //  {
+  70          //    if (1 == Key_Scan())
+  71          //    {
+  72          //      P1 = ~P1;
+  73          //    }
+  74          //  }
+  75          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    121    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
