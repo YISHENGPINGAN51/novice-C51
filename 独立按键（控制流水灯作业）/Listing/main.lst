@@ -1,0 +1,77 @@
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 23:09:36 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Key.h"
+   3          #include "display.h"
+   4          
+   5          void Key_Service();
+   6          void Dis_Service();
+   7          
+   8          unsigned char i;
+   9          unsigned char parm[] = { 12, 55, 77, 99 };
+  10          
+  11          void main()
+  12          {
+  13   1        while (1)
+  14   1        {
+  15   2          Key_Service();
+  16   2          Dis_Service();
+  17   2          Display();
+  18   2        }
+  19   1      }
+  20          
+  21          void Dis_Service()
+  22          {
+  23   1        LEDBuf[0] = 20;
+  24   1        LEDBuf[1] = i + 1;
+  25   1        LEDBuf[2] = parm[i] / 10 % 10;
+  26   1        LEDBuf[3] = parm[i] % 10;
+  27   1      }
+  28          
+  29          void Key_Service()
+  30          {
+  31   1        switch (Key_Scan())
+  32   1        {
+  33   2          case 0: break;
+  34   2          case 1: i++; if (i > 3) i = 0; break;
+  35   2          case 2: parm[i]++; if (parm[i] > 99) parm[i] = 0; break;
+  36   2          case 3: parm[i]--; if (parm[i] > 99) parm[i] = 99; break;
+  37   2          case 4: parm[i] = 0; break;
+  38   2          default: break;
+  39   2        }
+  40   1      }
+  41          
+  42          //void main()
+  43          //{
+  44          //  while (1)
+  45          //  {
+  46          //    if (1 == Key_Scan())
+  47          //    {
+  48          //      P1 = ~P1;
+  49          //    }
+  50          //  }
+  51          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 23:09:36 PAGE 2   
+
+   CODE SIZE        =    125    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

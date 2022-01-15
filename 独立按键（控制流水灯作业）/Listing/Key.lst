@@ -1,0 +1,90 @@
+C51 COMPILER V9.54   KEY                                                                   01/15/2022 23:09:36 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN ..\Output\Key.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\Key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Lis
+                    -ting\Key.lst) TABS(2) OBJECT(..\Output\Key.obj)
+
+line level    source
+
+   1          #include "Key.h"
+   2          
+   3          unsigned char Key_Scan()
+   4          {
+   5   1        unsigned char KeyNum = 0;
+   6   1        
+   7   1        KEY1 = 1;
+   8   1        KEY2 = 1;
+   9   1        KEY3 = 1;
+  10   1        KEY4 = 1;
+  11   1        
+  12   1        /*if (!KEY1)           //1、判断是否有按键按下
+  13   1        {
+  14   1          DelayXms(10);      //2、延时消抖  时间一般5-10ms
+  15   1          if (!KEY1)         //3、再次判断按键是否按下
+  16   1          {
+  17   1            KeyNum = 1;      //4、键值的软件编码，赋一个键值，不直接做按键功能
+  18   1          }  while (!KEY1);  //5、松手等待
+  19   1        }
+  20   1        
+  21   1        if (!KEY2)           //1、判断是否有按键按下
+  22   1        {
+  23   1          DelayXms(10);      //2、延时消抖  时间一般5-10ms
+  24   1          if (!KEY2)         //3、再次判断按键是否按下
+  25   1          {
+  26   1            KeyNum = 2;      //4、键值的软件编码，赋一个键值，不直接做按键功能
+  27   1          }  while (!KEY2);  //5、松手等待
+  28   1        }
+  29   1        
+  30   1        if (!KEY3)           //1、判断是否有按键按下
+  31   1        {
+  32   1          DelayXms(10);      //2、延时消抖  时间一般5-10ms
+  33   1          if (!KEY3)         //3、再次判断按键是否按下
+  34   1          {
+  35   1            KeyNum = 3;      //4、键值的软件编码，赋一个键值，不直接做按键功能
+  36   1          }  while (!KEY3);  //5、松手等待
+  37   1        }
+  38   1        
+  39   1        if (!KEY4)           //1、判断是否有按键按下
+  40   1        {
+  41   1          DelayXms(10);      //2、延时消抖  时间一般5-10ms
+  42   1          if (!KEY4)         //3、再次判断按键是否按下
+  43   1          {
+  44   1            KeyNum = 4;      //4、键值的软件编码，赋一个键值，不直接做按键功能
+  45   1          }  while (!KEY4);  //5、松手等待
+  46   1        }*/
+  47   1        if (!KEY1 || !KEY2 || !KEY3 || !KEY4)
+  48   1        {
+  49   2          DelayXms(10);
+  50   2          if (!KEY1 || !KEY2 || !KEY3 || !KEY4)
+  51   2          {
+  52   3            if (!KEY1)
+  53   3              KeyNum = 1;
+  54   3            if (!KEY2)
+C51 COMPILER V9.54   KEY                                                                   01/15/2022 23:09:36 PAGE 2   
+
+  55   3              KeyNum = 2;
+  56   3            if (!KEY3)
+  57   3              KeyNum = 3;
+  58   3            if (!KEY4)
+  59   3              KeyNum = 4;
+  60   3          }  while (!KEY1 || !KEY2 || !KEY3 || !KEY4);
+  61   2        }
+  62   1        
+  63   1        return KeyNum;
+  64   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     81    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
