@@ -1,0 +1,76 @@
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 22:54:27 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Key.h"
+   3          #include "display.h"
+   4          
+   5          void Dis_Service();
+   6          void Key_Service();
+   7          
+   8          unsigned int NumCnt;
+   9          
+  10          void main()
+  11          {
+  12   1        while (1)
+  13   1        {
+  14   2          Key_Service();
+  15   2          Dis_Service();
+  16   2          Display();
+  17   2        }
+  18   1      }
+  19          
+  20          void Dis_Service()
+  21          {
+  22   1        LEDBuf[0] = NumCnt / 1000;
+  23   1        LEDBuf[1] = NumCnt / 100 % 10;
+  24   1        LEDBuf[2] = NumCnt / 10 % 10;
+  25   1        LEDBuf[3] = NumCnt % 10;
+  26   1      }
+  27          
+  28          void Key_Service()
+  29          {
+  30   1        switch (Key_Scan())
+  31   1        {
+  32   2          case 0: break;
+  33   2          case 1: NumCnt++; if (NumCnt > 9999) NumCnt = 0; break;
+  34   2          case 2: NumCnt--; if (NumCnt > 9999) NumCnt = 9999; break;
+  35   2          case 3: NumCnt = 0; break;
+  36   2          case 4: NumCnt = 88; break;
+  37   2          default: break;
+  38   2        }
+  39   1      }
+  40          
+  41          //void main()
+  42          //{
+  43          //  while (1)
+  44          //  {
+  45          //    if (1 == Key_Scan())
+  46          //    {
+  47          //      P1 = ~P1;
+  48          //    }
+  49          //  }
+  50          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    154    ----
+C51 COMPILER V9.54   MAIN                                                                  01/15/2022 22:54:27 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
