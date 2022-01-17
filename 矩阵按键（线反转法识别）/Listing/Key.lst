@@ -1,0 +1,63 @@
+C51 COMPILER V9.54   KEY                                                                   01/16/2022 19:17:34 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN ..\Output\Key.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\Key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Lis
+                    -ting\Key.lst) TABS(2) OBJECT(..\Output\Key.obj)
+
+line level    source
+
+   1          #include "Key.h"
+   2          
+   3          unsigned char Key_Scan()
+   4          {
+   5   1        unsigned char temp, temp2;
+   6   1        static unsigned char KeyNum = 22;
+   7   1        KEYPORT = 0xf0;//4行做输出，4行做输入  输出写“0”  输入写“1”
+   8   1        temp = KEYPORT;//读入P2口
+   9   1        if (temp != 0xf0)//判断是否有键按下
+  10   1        {
+  11   2          DelayXms(10);
+  12   2          if (temp != 0xf0)//再次判断是否有键按下，如果真，代表真正的按键按下
+  13   2          {
+  14   3            temp = KEYPORT & 0xf0;//取高四位，确定列号
+  15   3            KEYPORT = 0x0f;//4行做输入，4行做输出
+  16   3            temp2 = KEYPORT & 0x0f;//读入  并取低四位，确定行号
+  17   3          }
+  18   2        }
+  19   1        switch (temp + temp2)
+  20   1        {
+  21   2          case 0xee: KeyNum = 1; break;
+  22   2          case 0xed: KeyNum = 2; break;
+  23   2          case 0xeb: KeyNum = 3; break;
+  24   2          case 0xe7: KeyNum = 4; break;
+  25   2          case 0xde: KeyNum = 5; break;
+  26   2          case 0xdd: KeyNum = 6; break;
+  27   2          case 0xdb: KeyNum = 7; break;
+  28   2          case 0xd7: KeyNum = 8; break;
+  29   2          case 0xbe: KeyNum = 9; break;
+  30   2          case 0xbd: KeyNum = 0; break;
+  31   2          case 0xbb: KeyNum = 10; break;
+  32   2          case 0xb7: KeyNum = 11; break;
+  33   2          case 0x7e: KeyNum = 12; break;
+  34   2          case 0x7d: KeyNum = 13; break;
+  35   2          case 0x7b: KeyNum = 14; break;
+  36   2          case 0x77: KeyNum = 15; break;
+  37   2        }
+  38   1        return KeyNum;
+  39   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    180    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
