@@ -1,0 +1,203 @@
+C51 COMPILER V9.54   KEY                                                                   01/16/2022 13:21:03 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN ..\Output\Key.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\Key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Lis
+                    -ting\Key.lst) TABS(2) OBJECT(..\Output\Key.obj)
+
+line level    source
+
+   1          #include "Key.h"
+   2          
+   3          unsigned char Key_Scan()
+   4          {
+   5   1        static unsigned char KeyNum = 22;
+   6   1        //第一列输出低电平，检测第一列的四行
+   7   1        KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+   8   1        KEYOUT1 = 0; KEYOUT2 = 1; KEYOUT3 = 1; KEYOUT4 = 1;
+   9   1        
+  10   1        if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  11   1        {
+  12   2          DelayXms(10);
+  13   2          if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  14   2          {
+  15   3            if (!KEYIN1)
+  16   3              KeyNum = 1;
+  17   3            if (!KEYIN2)
+  18   3              KeyNum = 2;
+  19   3            if (!KEYIN3)
+  20   3              KeyNum = 3;
+  21   3            if (!KEYIN4)
+  22   3              KeyNum = 4;
+  23   3          }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+  24   2        }
+  25   1        
+  26   1        //第二列输出低电平，检测第二列的四行
+  27   1        KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+  28   1        KEYOUT1 = 1; KEYOUT2 = 0; KEYOUT3 = 1; KEYOUT4 = 1;
+  29   1        
+  30   1        if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  31   1        {
+  32   2          DelayXms(10);
+  33   2          if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  34   2          {
+  35   3            if (!KEYIN1)
+  36   3              KeyNum = 5;
+  37   3            if (!KEYIN2)
+  38   3              KeyNum = 6;
+  39   3            if (!KEYIN3)
+  40   3              KeyNum = 7;
+  41   3            if (!KEYIN4)
+  42   3              KeyNum = 8;
+  43   3          }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+  44   2        }
+  45   1        
+  46   1        //第三列输出低电平，检测第三列的四行
+  47   1        KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+  48   1        KEYOUT1 = 1; KEYOUT2 = 1; KEYOUT3 = 0; KEYOUT4 = 1;
+  49   1        
+  50   1        if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  51   1        {
+  52   2          DelayXms(10);
+  53   2          if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  54   2          {
+C51 COMPILER V9.54   KEY                                                                   01/16/2022 13:21:03 PAGE 2   
+
+  55   3            if (!KEYIN1)
+  56   3              KeyNum = 9;
+  57   3            if (!KEYIN2)
+  58   3              KeyNum = 0;
+  59   3            if (!KEYIN3)
+  60   3              KeyNum = 10;
+  61   3            if (!KEYIN4)
+  62   3              KeyNum = 11;
+  63   3          }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+  64   2        }
+  65   1        
+  66   1        //第四列输出低电平，检测第四列的四行
+  67   1        KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+  68   1        KEYOUT1 = 1; KEYOUT2 = 1; KEYOUT3 = 1; KEYOUT4 = 0;
+  69   1        
+  70   1        if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  71   1        {
+  72   2          DelayXms(10);
+  73   2          if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  74   2          {
+  75   3            if (!KEYIN1)
+  76   3              KeyNum = 12;
+  77   3            if (!KEYIN2)
+  78   3              KeyNum = 13;
+  79   3            if (!KEYIN3)
+  80   3              KeyNum = 14;
+  81   3            if (!KEYIN4)
+  82   3              KeyNum = 15;
+  83   3          }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+  84   2        }
+  85   1        
+  86   1        return KeyNum;
+  87   1      }
+  88          
+  89          //unsigned char Key_Scan()
+  90          //{
+  91          //  static unsigned char KeyNum = 22;
+  92          //  //第一列输出低电平，检测第一列的四行
+  93          //  KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+  94          //  KEYOUT1 = 0; KEYOUT2 = 1; KEYOUT3 = 1; KEYOUT4 = 1;
+  95          //  
+  96          //  if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+  97          //  {
+  98          //    DelayXms(10);
+  99          //    if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 100          //    {
+ 101          //      if (!KEYIN1)
+ 102          //        KeyNum = 1;
+ 103          //      if (!KEYIN2)
+ 104          //        KeyNum = 2;
+ 105          //      if (!KEYIN3)
+ 106          //        KeyNum = 3;
+ 107          //      if (!KEYIN4)
+ 108          //        KeyNum = 4;
+ 109          //    }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+ 110          //  }
+ 111          //  
+ 112          //  //第二列输出低电平，检测第二列的四行
+ 113          //  KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+ 114          //  KEYOUT1 = 1; KEYOUT2 = 0; KEYOUT3 = 1; KEYOUT4 = 1;
+ 115          //  
+ 116          //  if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+C51 COMPILER V9.54   KEY                                                                   01/16/2022 13:21:03 PAGE 3   
+
+ 117          //  {
+ 118          //    DelayXms(10);
+ 119          //    if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 120          //    {
+ 121          //      if (!KEYIN1)
+ 122          //        KeyNum = 5;
+ 123          //      if (!KEYIN2)
+ 124          //        KeyNum = 6;
+ 125          //      if (!KEYIN3)
+ 126          //        KeyNum = 7;
+ 127          //      if (!KEYIN4)
+ 128          //        KeyNum = 8;
+ 129          //    }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+ 130          //  }
+ 131          //  
+ 132          //  //第三列输出低电平，检测第三列的四行
+ 133          //  KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+ 134          //  KEYOUT1 = 1; KEYOUT2 = 1; KEYOUT3 = 0; KEYOUT4 = 1;
+ 135          //  
+ 136          //  if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 137          //  {
+ 138          //    DelayXms(10);
+ 139          //    if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 140          //    {
+ 141          //      if (!KEYIN1)
+ 142          //        KeyNum = 9;
+ 143          //      if (!KEYIN2)
+ 144          //        KeyNum = 10;
+ 145          //      if (!KEYIN3)
+ 146          //        KeyNum = 11;
+ 147          //      if (!KEYIN4)
+ 148          //        KeyNum = 12;
+ 149          //    }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+ 150          //  }
+ 151          //  
+ 152          //  //第四列输出低电平，检测第四列的四行
+ 153          //  KEYIN1 = 1; KEYIN2 = 1; KEYIN3 = 1; KEYIN4 = 1;
+ 154          //  KEYOUT1 = 1; KEYOUT2 = 1; KEYOUT3 = 1; KEYOUT4 = 0;
+ 155          //  
+ 156          //  if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 157          //  {
+ 158          //    DelayXms(10);
+ 159          //    if (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4)
+ 160          //    {
+ 161          //      if (!KEYIN1)
+ 162          //        KeyNum = 13;
+ 163          //      if (!KEYIN2)
+ 164          //        KeyNum = 14;
+ 165          //      if (!KEYIN3)
+ 166          //        KeyNum = 15;
+ 167          //      if (!KEYIN4)
+ 168          //        KeyNum = 16;
+ 169          //    }  while (!KEYIN1 || !KEYIN2 || !KEYIN3 || !KEYIN4);
+ 170          //  }
+ 171          //  
+ 172          //  return KeyNum;
+ 173          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    335    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.54   KEY                                                                   01/16/2022 13:21:03 PAGE 4   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
