@@ -1,0 +1,62 @@
+C51 COMPILER V9.54   MAIN                                                                  01/17/2022 23:42:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit LED = P1^0;
+   4          
+   5          void EX0_Init(void);
+   6          
+   7          void main()
+   8          {
+   9   1        EX0_Init();
+  10   1        while (1)
+  11   1        {
+  12   2          
+  13   2        }
+  14   1      }
+  15          
+  16          //外部中断0  初始化
+  17          void EX0_Init(void)
+  18          {
+  19   1        //1、设置触发方式  外部中断0
+  20   1        IT0 = 1;//设置  下降沿触发  TCON
+  21   1        EX0 = 1;//IE
+  22   1        EA = 1;
+  23   1      }
+  24          
+  25          /*****************************************************************
+  26          1、中断服务函数一定是一个没有返回值的函数
+  27          2、中断服务函数一定是没有参数的函数
+  28          3、中断服务函数函数名后跟关键字 interrupt
+  29          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  30          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  31          5、中断服务函数不能被主程序或其他程序所调用
+  32          6、n后面跟using m (0 - 3)工作寄存器组
+  33          *****************************************************************/
+  34          
+  35          void EX0_ISR(void) interrupt 0
+  36          {
+  37   1        LED = ~LED;
+  38   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     15    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
