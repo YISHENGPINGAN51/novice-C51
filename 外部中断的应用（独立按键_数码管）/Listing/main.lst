@@ -1,0 +1,106 @@
+C51 COMPILER V9.54   MAIN                                                                  01/18/2022 01:09:21 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "display.h"
+   3          #include "delay.h"
+   4          
+   5          //函数声明
+   6          void EX0_Init(void);
+   7          void EX1_Init(void);
+   8          void Dis_Service();
+   9          unsigned int parameter = 0;
+  10          
+  11          void main()
+  12          {
+  13   1        unsigned int i;
+  14   1        EX0_Init();
+  15   1        EX1_Init();
+  16   1        EA = 1;
+  17   1        for (i = 0; i < 2000; i++)
+  18   1        {
+  19   2          Display();
+  20   2        }
+  21   1        while (1)
+  22   1        {
+  23   2          Dis_Service();
+  24   2        }
+  25   1      }
+  26          
+  27          void Dis_Service()
+  28          {
+  29   1        LEDBuf[0] = parameter / 1000;
+  30   1        LEDBuf[1] = parameter / 100 % 10;
+  31   1        LEDBuf[2] = parameter / 10 % 10;
+  32   1        LEDBuf[3] = parameter % 10;
+  33   1        Display();
+  34   1      }
+  35          
+  36          //外部中断0  初始化
+  37          void EX0_Init(void)
+  38          {
+  39   1        IT0 = 1;//设置  下降沿触发  TCON
+  40   1        EX0 = 1;//IE
+  41   1      }
+  42          
+  43          //外部中断1  初始化
+  44          void EX1_Init(void)
+  45          {
+  46   1        IT1 = 1;//设置  下降沿触发  TCON
+  47   1        EX1 = 1;//IE
+  48   1      }
+  49          
+  50          /*****************************************************************
+  51          1、中断服务函数一定是一个没有返回值的函数
+  52          2、中断服务函数一定是没有参数的函数
+  53          3、中断服务函数函数名后跟关键字 interrupt
+  54          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+C51 COMPILER V9.54   MAIN                                                                  01/18/2022 01:09:21 PAGE 2   
+
+  55          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  56          5、中断服务函数不能被主程序或其他程序所调用
+  57          6、n后面跟using m (0 - 3)工作寄存器组
+  58          *****************************************************************/
+  59          
+  60          void EX0_ISR(void) interrupt 0
+  61          {
+  62   1        DelayXms(10);
+  63   1        if (!INT0)
+  64   1        {
+  65   2          parameter++;
+  66   2          if (parameter > 9999)
+  67   2            parameter = 0;
+  68   2        }
+  69   1      }
+  70          
+  71          void EX1_ISR(void) interrupt 2
+  72          {
+  73   1        DelayXms(10);
+  74   1        if (!INT1)
+  75   1        {
+  76   2          parameter--;
+  77   2          if (parameter > 9999)
+  78   2            parameter = 9999;
+  79   2        }
+  80   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    297    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
