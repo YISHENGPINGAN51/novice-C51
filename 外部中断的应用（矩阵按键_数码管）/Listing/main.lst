@@ -1,0 +1,84 @@
+C51 COMPILER V9.54   MAIN                                                                  01/19/2022 15:58:28 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "display.h"
+   3          #include "delay.h"
+   4          #include "Key.h"
+   5          
+   6          unsigned char KeyNum;
+   7          unsigned char KeyPressFlag;
+   8          //函数声明
+   9          void EX0_Init(void);
+  10          void Dis_Service();
+  11          
+  12          void main()
+  13          {
+  14   1        EX0_Init();
+  15   1        P0 = 0x0f;
+  16   1        while (1)
+  17   1        {
+  18   2          if (1 == KeyPressFlag)
+  19   2          {
+  20   3            KeyPressFlag = 0;
+  21   3            KeyNum = Key_Scan();
+  22   3      //    P0 = 0x0f;//线反转法不需要，行列扫描需要
+  23   3          }
+  24   2          Dis_Service();
+  25   2          Display();
+  26   2        }
+  27   1      }
+  28          
+  29          void Dis_Service()
+  30          {
+  31   1        LEDBuf[0] = 23;
+  32   1        LEDBuf[1] = 23;
+  33   1        LEDBuf[2] = 23;
+  34   1        LEDBuf[3] = KeyNum;
+  35   1      }
+  36          
+  37          //外部中断0  初始化
+  38          void EX0_Init(void)
+  39          {
+  40   1        IT0 = 1;//设置  下降沿触发  TCON
+  41   1        EX0 = 1;//IE
+  42   1        EA = 1;
+  43   1      }
+  44          
+  45          /*****************************************************************
+  46          1、中断服务函数一定是一个没有返回值的函数
+  47          2、中断服务函数一定是没有参数的函数
+  48          3、中断服务函数函数名后跟关键字 interrupt
+  49          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  50          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  51          5、中断服务函数不能被主程序或其他程序所调用
+  52          6、n后面跟using m (0 - 3)工作寄存器组
+  53          *****************************************************************/
+  54          
+C51 COMPILER V9.54   MAIN                                                                  01/19/2022 15:58:28 PAGE 2   
+
+  55          void EX0_ISR(void) interrupt 0
+  56          {
+  57   1        KeyPressFlag = 1;
+  58   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     51    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

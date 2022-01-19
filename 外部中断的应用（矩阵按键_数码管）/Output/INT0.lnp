@@ -1,0 +1,6 @@
+"..\Output\main.obj",
+"..\Output\display.obj",
+"..\Output\delay.obj",
+"..\Output\Key.obj" 
+TO "..\Output\INT0" 
+PRINT("..\Listing\INT0.m51")
