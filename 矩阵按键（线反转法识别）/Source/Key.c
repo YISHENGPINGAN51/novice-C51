@@ -4,16 +4,16 @@ unsigned char Key_Scan()
 {
 	unsigned char temp, temp2;
 	static unsigned char KeyNum = 22;
-	KEYPORT = 0xf0;//4ÐÐ×öÊä³ö£¬4ÐÐ×öÊäÈë  Êä³öÐ´¡°0¡±  ÊäÈëÐ´¡°1¡±
-	temp = KEYPORT;//¶ÁÈëP2¿Ú
-	if (temp != 0xf0)//ÅÐ¶ÏÊÇ·ñÓÐ¼ü°´ÏÂ
+	KEYPORT = 0xf0;//4è¡Œåšè¾“å‡ºï¼Œ4åˆ—åšè¾“å…¥  è¾“å‡ºå†™â€œ0â€  è¾“å…¥å†™â€œ1â€
+	temp = KEYPORT;//è¯»å…¥P3å£
+	if (temp != 0xf0)//åˆ¤æ–­æ˜¯å¦æœ‰é”®æŒ‰ä¸‹
 	{
 		DelayXms(10);
-		if (temp != 0xf0)//ÔÙ´ÎÅÐ¶ÏÊÇ·ñÓÐ¼ü°´ÏÂ£¬Èç¹ûÕæ£¬´ú±íÕæÕýµÄ°´¼ü°´ÏÂ
+		if (temp != 0xf0)//å†æ¬¡åˆ¤æ–­æ˜¯å¦æœ‰é”®æŒ‰ä¸‹ï¼Œå¦‚æžœçœŸï¼Œä»£è¡¨çœŸæ­£çš„æŒ‰é”®æŒ‰ä¸‹
 		{
-			temp = KEYPORT & 0xf0;//È¡¸ßËÄÎ»£¬È·¶¨ÁÐºÅ
-			KEYPORT = 0x0f;//4ÐÐ×öÊäÈë£¬4ÐÐ×öÊä³ö
-			temp2 = KEYPORT & 0x0f;//¶ÁÈë  ²¢È¡µÍËÄÎ»£¬È·¶¨ÐÐºÅ
+			temp = KEYPORT & 0xf0;//å–é«˜å››ä½ï¼Œç¡®å®šåˆ—å·
+			KEYPORT = 0x0f;//4è¡Œåšè¾“å…¥ï¼Œ4åˆ—åšè¾“å‡º
+			temp2 = KEYPORT & 0x0f;//è¯»å…¥  å¹¶å–ä½Žå››ä½ï¼Œç¡®å®šè¡Œå·
 		}
 	}
 	switch (temp + temp2)
