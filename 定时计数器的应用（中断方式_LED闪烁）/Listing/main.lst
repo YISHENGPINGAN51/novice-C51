@@ -1,0 +1,71 @@
+C51 COMPILER V9.54   MAIN                                                                  01/21/2022 01:58:52 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit LED = P1^0;
+   4          unsigned char timer0Cnt;
+   5          void Timer0Init(void);
+   6          
+   7          void main()
+   8          {
+   9   1        Timer0Init();
+  10   1        while (1);
+  11   1      }
+  12          
+  13          void Timer0Init(void)   //50毫秒@12.000MHz
+  14          {
+  15   1        TMOD &= 0xF0;   //设置定时器模式  GATE  C/T  M1  M0
+  16   1        TMOD |= 0x01;   //设置定时器模式
+  17   1        TL0 = 0xB0;   //设置定时初值  (65535 - 50000) % 256
+  18   1        TH0 = 0x3C;   //设置定时初值  (65535 - 50000) / 256
+  19   1        TF0 = 0;    //清除TF0标志
+  20   1        ET0 = 1;
+  21   1        EA = 1;
+  22   1        TR0 = 1;    //定时器0开始计时
+  23   1      }
+  24          
+  25          /*****************************************************************
+  26          1、中断服务函数一定是一个没有返回值的函数
+  27          2、中断服务函数一定是没有参数的函数
+  28          3、中断服务函数函数名后跟关键字 interrupt
+  29          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  30          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  31          5、中断服务函数不能被主程序或其他程序所调用
+  32          6、n后面跟using m (0 - 3)工作寄存器组
+  33          *****************************************************************/
+  34          void timer_ISR(void) interrupt 1
+  35          {
+  36   1        TR0 = 0;
+  37   1        TL0 = 0xB0;   //设置定时初值  (65535 - 50000) % 256
+  38   1        TH0 = 0x3C;   //设置定时初值  (65535 - 50000) / 256
+  39   1        timer0Cnt++;
+  40   1        if (timer0Cnt >= 10)
+  41   1        {
+  42   2          LED = ~LED;
+  43   2        }
+  44   1        TR0 = 1;
+  45   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     56    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  01/21/2022 01:58:52 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
