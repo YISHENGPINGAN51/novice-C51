@@ -1,0 +1,116 @@
+C51 COMPILER V9.54   MAIN                                                                  01/24/2022 12:44:04 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <intrins.h>
+   3          #include "display.h"
+   4          
+   5          void Timer0Init(void);
+   6          void Timer1Init(void);
+   7          
+   8          unsigned char secCnt;
+   9          unsigned char sec = 60;
+  10          unsigned char timerCnt;
+  11          unsigned char temp = 0xfe;
+  12          
+  13          void main()
+  14          {
+  15   1        Timer0Init();
+  16   1        Timer1Init();
+  17   1        EA = 1;
+  18   1        while (1)
+  19   1        {
+  20   2          LEDBuf[0] = 23;
+  21   2          LEDBuf[1] = 23;
+  22   2          LEDBuf[2] = sec / 10;
+  23   2          LEDBuf[3] = sec % 10;
+  24   2        }
+  25   1      }
+  26          
+  27          void Timer0Init(void)   //1毫秒@12.000MHz
+  28          {
+  29   1        TMOD &= 0xF0;   //设置定时器模式
+  30   1        TMOD |= 0x01;   //设置定时器模式
+  31   1        TL0 = 0x18;   //设置定时初值
+  32   1        TH0 = 0xFC;   //设置定时初值
+  33   1        TF0 = 0;    //清除TF0标志
+  34   1        ET0 = 1;
+  35   1        TR0 = 1;    //定时器0开始计时
+  36   1      }
+  37          
+  38          void Timer1Init(void)   //50毫秒@12.000MHz
+  39          {
+  40   1        TMOD &= 0x0F;   //设置定时器模式
+  41   1        TMOD |= 0x10;   //设置定时器模式
+  42   1        TL1 = 0xB0;   //设置定时初值
+  43   1        TH1 = 0x3C;   //设置定时初值
+  44   1        TF1 = 0;    //清除TF1标志
+  45   1        ET1 = 1;
+  46   1        TR1 = 1;    //定时器1开始计时
+  47   1      }
+  48          
+  49          /*****************************************************************
+  50          1、中断服务函数一定是一个没有返回值的函数
+  51          2、中断服务函数一定是没有参数的函数
+  52          3、中断服务函数函数名后跟关键字 interrupt
+  53          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  54          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+C51 COMPILER V9.54   MAIN                                                                  01/24/2022 12:44:04 PAGE 2   
+
+  55          5、中断服务函数不能被主程序或其他程序所调用
+  56          6、n后面跟using m (0 - 3)工作寄存器组
+  57          *****************************************************************/
+  58          void timer0_ISR(void) interrupt 1
+  59          {
+  60   1        TR0 = 0;
+  61   1        Display();
+  62   1        TL0 = 0x18;   //设置定时初值
+  63   1        TH0 = 0xFC;   //设置定时初值
+  64   1        TR0 = 1;
+  65   1      }
+  66          
+  67          void timer1_ISR(void) interrupt 3
+  68          {
+  69   1        TR1 = 0;
+  70   1        secCnt++;
+  71   1        timerCnt++;
+  72   1        if (timerCnt >= 20)
+  73   1        {
+  74   2          timerCnt = 0;
+  75   2          P1 = temp;
+  76   2          temp = _crol_(temp, 1);
+  77   2        }
+  78   1        if (secCnt >= 20)
+  79   1        {
+  80   2          secCnt = 0;
+  81   2          sec--;
+  82   2          if (sec > 60)
+  83   2          {
+  84   3            sec = 60;
+  85   3          }
+  86   2        }
+  87   1        TL1 = 0xB0;   //设置定时初值
+  88   1        TH1 = 0x3C;   //设置定时初值
+  89   1        TR1 = 1;
+  90   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    222    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
