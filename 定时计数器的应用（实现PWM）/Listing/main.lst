@@ -1,0 +1,107 @@
+C51 COMPILER V9.54   MAIN                                                                  01/25/2022 15:38:47 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit PWM = P1^0;
+   4          
+   5          unsigned char  PWM_Duty = 0;
+   6          unsigned char PWM_Cnt;
+   7          
+   8          void Timer0Init(void);
+   9          void EX0_Init();
+  10          
+  11          void main()
+  12          {
+  13   1        Timer0Init();
+  14   1        EX0_Init();
+  15   1        EA = 1;
+  16   1        while (1)
+  17   1        {
+  18   2          
+  19   2        }
+  20   1      }
+  21          
+  22          void Timer0Init(void)   //100微秒@12.000MHz
+  23          {
+  24   1        TMOD &= 0xF0;   //设置定时器模式
+  25   1        TMOD |= 0x01;   //设置定时器模式
+  26   1        TL0 = 0x9C;   //设置定时初值
+  27   1        TH0 = 0xFF;   //设置定时初值
+  28   1        TF0 = 0;    //清除TF0标志
+  29   1        ET0 = 1;
+  30   1        EA = 1;
+  31   1        TR0 = 1;    //定时器0开始计时
+  32   1      }
+  33          
+  34          void EX0_Init()
+  35          {
+  36   1        IT0 = 1;//下降沿触发
+  37   1        EX0 = 1;
+  38   1      }
+  39          /*****************************************************************
+  40          1、中断服务函数一定是一个没有返回值的函数
+  41          2、中断服务函数一定是没有参数的函数
+  42          3、中断服务函数函数名后跟关键字 interrupt
+  43          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  44          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  45          5、中断服务函数不能被主程序或其他程序所调用
+  46          6、n后面跟using m (0 - 3)工作寄存器组
+  47          *****************************************************************/
+  48          void timer0_ISR(void) interrupt 1
+  49          {
+  50   1        TR0 = 0;
+  51   1        PWM_Cnt++;
+  52   1        if (PWM_Cnt >= 100)
+  53   1        {
+  54   2          PWM_Cnt = 0;
+C51 COMPILER V9.54   MAIN                                                                  01/25/2022 15:38:47 PAGE 2   
+
+  55   2        }
+  56   1        if (PWM_Cnt <= PWM_Duty)
+  57   1        {
+  58   2          PWM = 1;
+  59   2        }
+  60   1        else
+  61   1          PWM = 0;
+  62   1        TL0 = 0x9C;   //设置定时初值
+  63   1        TH0 = 0xFF;   //设置定时初值
+  64   1        TR0 = 1;
+  65   1      }
+  66          
+  67          void EX0_ISR(void) interrupt 0
+  68          {
+  69   1        static unsigned char PWM_KEY;
+  70   1        PWM_KEY++;
+  71   1        switch (PWM_KEY)
+  72   1        {
+  73   2          case 1: PWM_Duty = 25; break;
+  74   2          case 2: PWM_Duty = 50; break;
+  75   2          case 3: PWM_Duty = 75; break;
+  76   2          case 4: PWM_Duty = 80; break;
+  77   2          case 5: PWM_Duty = 100; break;
+  78   2          case 6: PWM_Duty = 0; PWM_KEY = 0; break;
+  79   2          default: break;
+  80   2        }
+  81   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    144    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,3 @@
+"..\Output\main.obj" 
+TO "..\Output\Timer" 
+PRINT("..\Listing\Timer.m51")
