@@ -1,0 +1,199 @@
+C51 COMPILER V9.54   MAIN                                                                  01/26/2022 22:50:46 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "display.h"
+   3          
+   4          void Timer0Init(void);
+   5          void Timer1Init(void);
+   6          void showNormal();
+   7          void EX0_Init();
+   8          void EX1_Init();
+   9          void showSec();
+  10          void showMin();
+  11          void showHour();
+  12          
+  13          unsigned char timerCnt;
+  14          unsigned char sec;
+  15          unsigned char min;
+  16          unsigned char hour;
+  17          unsigned char state = 0;
+  18          
+  19          void main()
+  20          {
+  21   1        EX0_Init();
+  22   1        EX1_Init();
+  23   1        Timer0Init();
+  24   1        Timer1Init();
+  25   1        EA = 1;
+  26   1        while (1)
+  27   1        {
+  28   2          switch (state)
+  29   2          {
+  30   3            case 0: TR0 = 1; showNormal(); break;//正常时钟状态
+  31   3            case 1: showSec(); break;//调秒
+  32   3            case 2: showMin(); break;//调分
+  33   3            case 3: showHour(); break;//调时
+  34   3            default: break;
+  35   3          }
+  36   2        }
+  37   1      }
+  38          
+  39          void showNormal()
+  40          {
+  41   1        LEDBuf[0] = hour / 10;
+  42   1        LEDBuf[1] = hour % 10;
+  43   1        LEDBuf[2] = min / 10;
+  44   1        LEDBuf[3] = min % 10;
+  45   1      }
+  46          
+  47          void showSec()
+  48          {
+  49   1        LEDBuf[0] = 23;
+  50   1        LEDBuf[1] = 23;
+  51   1        LEDBuf[2] = sec / 10;
+  52   1        LEDBuf[3] = sec % 10;
+  53   1      }
+  54          
+C51 COMPILER V9.54   MAIN                                                                  01/26/2022 22:50:46 PAGE 2   
+
+  55          void showMin()
+  56          {
+  57   1        LEDBuf[0] = min / 10;
+  58   1        LEDBuf[1] = min % 10;
+  59   1        LEDBuf[2] = 23;
+  60   1        LEDBuf[3] = 23;
+  61   1      }
+  62          
+  63          void showHour()
+  64          {
+  65   1        LEDBuf[0] = hour / 10;
+  66   1        LEDBuf[1] = hour % 10;
+  67   1        LEDBuf[2] = 23;
+  68   1        LEDBuf[3] = 23;
+  69   1      }
+  70          
+  71          void EX0_Init()
+  72          {
+  73   1        IT0 = 1;
+  74   1        EX0 = 1;
+  75   1      }
+  76          
+  77          void EX1_Init()
+  78          {
+  79   1        IT1 = 1;
+  80   1        EX1 = 1;
+  81   1      }
+  82          
+  83          void Timer0Init(void)   //50毫秒@12.000MHz
+  84          {
+  85   1        TMOD &= 0xF0;   //设置定时器模式
+  86   1        TMOD |= 0x01;   //设置定时器模式
+  87   1        TL0 = 0xB0;   //设置定时初值
+  88   1        TH0 = 0x3C;   //设置定时初值
+  89   1        TF0 = 0;    //清除TF0标志
+  90   1        ET0 = 1;
+  91   1      //  TR0 = 1;    //定时器0开始计时
+  92   1      }
+  93          
+  94          void Timer1Init(void)   //1毫秒@12.000MHz
+  95          {
+  96   1        TMOD &= 0x0F;   //设置定时器模式
+  97   1        TMOD |= 0x10;   //设置定时器模式
+  98   1        TL1 = 0x18;   //设置定时初值
+  99   1        TH1 = 0xFC;   //设置定时初值
+ 100   1        TF1 = 0;    //清除TF1标志
+ 101   1        ET1 = 1;
+ 102   1        TR1 = 1;    //定时器1开始计时
+ 103   1      }
+ 104          
+ 105          /*****************************************************************
+ 106          1、中断服务函数一定是一个没有返回值的函数
+ 107          2、中断服务函数一定是没有参数的函数
+ 108          3、中断服务函数函数名后跟关键字 interrupt
+ 109          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+ 110          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+ 111          5、中断服务函数不能被主程序或其他程序所调用
+ 112          6、n后面跟using m (0 - 3)工作寄存器组
+ 113          *****************************************************************/
+ 114          void timer0_ISR(void) interrupt 1
+ 115          {
+ 116   1        timerCnt++;
+C51 COMPILER V9.54   MAIN                                                                  01/26/2022 22:50:46 PAGE 3   
+
+ 117   1        if (timerCnt >= 20)//20次50ms中断，即1S时间到
+ 118   1        {
+ 119   2          timerCnt = 0;
+ 120   2          sec++;
+ 121   2          if (sec >= 60)
+ 122   2          {
+ 123   3            sec = 0;
+ 124   3            min++;
+ 125   3            if (min >= 60)
+ 126   3            {
+ 127   4              min = 0;
+ 128   4              hour++;
+ 129   4              if (hour >= 23)
+ 130   4              {
+ 131   5                hour = 0;
+ 132   5              }
+ 133   4            }
+ 134   3          }
+ 135   2        }
+ 136   1        TL0 = 0xB0;   //设置定时初值
+ 137   1        TH0 = 0x3C;   //设置定时初值
+ 138   1      }
+ 139          
+ 140          void timer1_ISR(void) interrupt 3
+ 141          {
+ 142   1        TR1 = 0;
+ 143   1        Display();
+ 144   1        TL1 = 0x18;   //设置定时初值
+ 145   1        TH1 = 0xFC;   //设置定时初值
+ 146   1        TR1 = 1;
+ 147   1      }
+ 148          
+ 149          void EX0_ISR() interrupt 0
+ 150          {
+ 151   1        TR0 = 0;
+ 152   1        state++;
+ 153   1        if (state > 3)
+ 154   1        {
+ 155   2          state = 0;
+ 156   2        }
+ 157   1      }
+ 158          
+ 159          void EX1_ISR() interrupt 2
+ 160          {
+ 161   1        switch (state)
+ 162   1        {
+ 163   2          case 0: break;
+ 164   2          case 1: sec++; if (sec >= 60) sec = 0; break;
+ 165   2          case 2: min++; if (min >= 60) min = 0; break;
+ 166   2          case 3: hour++; if (hour >= 23) hour = 0; break;
+ 167   2          default: break;
+ 168   2        }
+ 169   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    418    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  01/26/2022 22:50:46 PAGE 4   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
