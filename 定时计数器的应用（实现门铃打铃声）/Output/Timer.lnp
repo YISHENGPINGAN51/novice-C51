@@ -1,0 +1,5 @@
+"..\Output\main.obj",
+"..\Output\delay.obj",
+"..\Output\Key.obj" 
+TO "..\Output\Timer" 
+PRINT("..\Listing\Timer.m51")

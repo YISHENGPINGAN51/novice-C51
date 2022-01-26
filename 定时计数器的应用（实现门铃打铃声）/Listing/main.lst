@@ -1,0 +1,109 @@
+C51 COMPILER V9.54   MAIN                                                                  01/25/2022 23:12:10 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "Key.h"
+   3          
+   4          sbit DoorBell = P3^7;
+   5          
+   6          void Timer0Init(void);
+   7          void Key_Service();
+   8          
+   9          unsigned int timerCnt = 0;
+  10          unsigned char uc500Hz = 0;
+  11          unsigned char uc700Hz = 0;
+  12          unsigned char flag = 0;
+  13          void main()
+  14          {
+  15   1        Timer0Init();
+  16   1        while (1)
+  17   1        {
+  18   2          Key_Service();
+  19   2        }
+  20   1      }
+  21          
+  22          void Key_Service()
+  23          {
+  24   1        switch (Key_Scan())
+  25   1        {
+  26   2          case 1: TR0 = ~TR0; break;
+  27   2          case 2: break;
+  28   2          case 3: break;
+  29   2          case 4: break;
+  30   2          default: break;
+  31   2        }
+  32   1      }
+  33          
+  34          void Timer0Init(void)   //250微秒@12.000MHz
+  35          {
+  36   1        TMOD &= 0xF0;   //设置定时器模式
+  37   1        TMOD |= 0x01;   //设置定时器模式
+  38   1        TL0 = 0x06;   //设置定时初值
+  39   1        TH0 = 0xFF;   //设置定时初值
+  40   1        TF0 = 0;    //清除TF0标志
+  41   1        ET0 = 1;
+  42   1        EA = 1;
+  43   1      //  TR0 = 1;    //定时器0开始计时
+  44   1      }
+  45          
+  46          /*****************************************************************
+  47          1、中断服务函数一定是一个没有返回值的函数
+  48          2、中断服务函数一定是没有参数的函数
+  49          3、中断服务函数函数名后跟关键字 interrupt
+  50          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  51          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  52          5、中断服务函数不能被主程序或其他程序所调用
+  53          6、n后面跟using m (0 - 3)工作寄存器组
+  54          *****************************************************************/
+C51 COMPILER V9.54   MAIN                                                                  01/25/2022 23:12:10 PAGE 2   
+
+  55          void timer0_ISR(void) interrupt 1
+  56          {
+  57   1        timerCnt++;
+  58   1        if (timerCnt >= 2000)
+  59   1        {
+  60   2          timerCnt = 0;
+  61   2          flag = ~flag;
+  62   2        }
+  63   1        if (!flag)
+  64   1        {
+  65   2          uc700Hz++;
+  66   2          if (uc700Hz >= 3)
+  67   2          {
+  68   3            uc700Hz = 0;
+  69   3            DoorBell = ~DoorBell;
+  70   3          }
+  71   2        }
+  72   1        if (flag)
+  73   1        {
+  74   2          uc500Hz++;
+  75   2          if (uc500Hz >= 4)
+  76   2          {
+  77   3            uc500Hz = 0;
+  78   3            DoorBell = ~DoorBell;
+  79   3          }
+  80   2        }
+  81   1        TL0 = 0x06;   //设置定时初值
+  82   1        TH0 = 0xFF;   //设置定时初值
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    114    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
