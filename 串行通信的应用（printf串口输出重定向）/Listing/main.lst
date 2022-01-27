@@ -1,0 +1,50 @@
+C51 COMPILER V9.54   MAIN                                                                  01/27/2022 22:19:59 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "uart.h"
+   4          
+   5          void UartInit(void);
+   6          
+   7          void main()
+   8          {
+   9   1        unsigned char dat = 88;
+  10   1        unsigned int dat2 = 1250;
+  11   1        float dat3 = 12.5;
+  12   1        UartInit();
+  13   1        while (1)
+  14   1        {
+  15   2      //    sendByte('8');
+  16   2      //    sendByte('\r');
+  17   2      //    sendByte('\n');
+  18   2      //    sendString("Hello World!\r\n");
+  19   2          printf("Hello World!\r\n");
+  20   2          printf("ÄãºÃ\r\n");
+  21   2          printf("dat = %bu\r\n",dat);
+  22   2          printf("dat2 =%u\r\n", dat2);
+  23   2          printf("dat3 =%f\r\n", dat3);
+  24   2          DelayXms(2000);
+  25   2        }
+  26   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     98    ----
+   CONSTANT SIZE    =     56    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
