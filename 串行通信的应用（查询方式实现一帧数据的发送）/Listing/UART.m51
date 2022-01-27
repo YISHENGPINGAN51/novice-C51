@@ -1,0 +1,128 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        01/27/2022  13:48:09  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL_V5\C51\BIN\BL51.EXE ..\Output\main.obj, ..\Output\delay.obj TO ..\Output\UART PRINT (..\Listing\UART.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  ..\Output\main.obj (MAIN)
+  ..\Output\delay.obj (DELAY)
+  D:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  ..\Output\UART (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     001EH     UNIT         ?PR?_DELAYXMS?DELAY
+            CODE    0021H     0014H     UNIT         ?PR?UARTINIT?MAIN
+            CODE    0035H     0011H     UNIT         ?PR?MAIN?MAIN
+            CODE    0046H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0052H     0008H     UNIT         ?PR?_SENDBYTE?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   ..\Output\UART (MAIN)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN
+  +--> ?PR?UARTINIT?MAIN
+  +--> ?PR?_SENDBYTE?MAIN
+  +--> ?PR?_DELAYXMS?DELAY
+
+
+
+SYMBOL TABLE OF MODULE:  ..\Output\UART (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:0098H.1       PUBLIC        TI
+  C:0035H         PUBLIC        main
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/27/2022  13:48:09  PAGE 2
+
+
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  C:0021H         PUBLIC        UartInit
+  D:0089H         PUBLIC        TMOD
+  C:0052H         PUBLIC        _sendByte
+  B:00A8H.3       PUBLIC        ET1
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  B:0088H.6       PUBLIC        TR1
+  -------         PROC          MAIN
+  C:0035H         LINE#         7
+  C:0035H         LINE#         8
+  C:0035H         LINE#         9
+  C:0038H         LINE#         10
+  C:0038H         LINE#         11
+  C:0038H         LINE#         12
+  C:003DH         LINE#         13
+  C:0044H         LINE#         14
+  -------         ENDPROC       MAIN
+  -------         PROC          UARTINIT
+  C:0021H         LINE#         17
+  C:0021H         LINE#         18
+  C:0021H         LINE#         19
+  C:0024H         LINE#         21
+  C:0027H         LINE#         22
+  C:002AH         LINE#         23
+  C:002DH         LINE#         24
+  C:0030H         LINE#         25
+  C:0032H         LINE#         26
+  C:0034H         LINE#         27
+  -------         ENDPROC       UARTINIT
+  -------         PROC          _SENDBYTE
+  D:0007H         SYMBOL        dat
+  C:0052H         LINE#         29
+  C:0052H         LINE#         30
+  C:0052H         LINE#         31
+  C:0054H         LINE#         32
+  C:0057H         LINE#         33
+  C:0059H         LINE#         34
+  -------         ENDPROC       _SENDBYTE
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        DELAY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0003H         PUBLIC        _DelayXms
+  -------         PROC          _DELAYXMS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0003H         LINE#         9
+  C:0003H         LINE#         10
+  C:0003H         LINE#         12
+  C:000CH         LINE#         13
+  C:0020H         LINE#         14
+  -------         ENDPROC       _DELAYXMS
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/27/2022  13:48:09  PAGE 3
+
+
+  -------         ENDMOD        DELAY
+
+Program Size: data=9.0 xdata=0 code=90
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

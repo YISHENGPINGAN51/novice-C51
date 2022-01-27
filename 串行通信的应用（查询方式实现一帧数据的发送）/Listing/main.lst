@@ -1,0 +1,58 @@
+C51 COMPILER V9.54   MAIN                                                                  01/27/2022 13:48:08 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          
+   4          void UartInit(void);
+   5          void sendByte(unsigned char dat);
+   6          
+   7          void main()
+   8          {
+   9   1        UartInit();
+  10   1        while (1)
+  11   1        {
+  12   2          sendByte('8');
+  13   2          DelayXms(1000);
+  14   2        }
+  15   1      }
+  16          
+  17          void UartInit(void)   //9600bps@11.0592MHz
+  18          {
+  19   1        SCON = 0x50;    //8位数据,可变波特率  SM0  SM1  SM2  REN  TB8  RB8  TI  RI
+  20   1                        //                    0    1    0    1    0    0   0   0
+  21   1        TMOD &= 0x0F;   //清除定时器1模式位
+  22   1        TMOD |= 0x20;   //设定定时器1为8位自动重装方式
+  23   1        TL1 = 0xFD;   //设定定时初值
+  24   1        TH1 = 0xFD;   //设定定时器重装值
+  25   1        ET1 = 0;    //禁止定时器1中断
+  26   1        TR1 = 1;    //启动定时器1
+  27   1      }
+  28          
+  29          void sendByte(unsigned char dat)
+  30          {
+  31   1        SBUF = dat;//  10位  异步串口通信  0 88H 1
+  32   1        while (!TI);
+  33   1        TI = 0;
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     45    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

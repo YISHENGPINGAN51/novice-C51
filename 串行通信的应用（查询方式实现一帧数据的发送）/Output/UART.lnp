@@ -1,0 +1,4 @@
+"..\Output\main.obj",
+"..\Output\delay.obj" 
+TO "..\Output\UART" 
+PRINT("..\Listing\UART.m51")
