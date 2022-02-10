@@ -1,0 +1,110 @@
+C51 COMPILER V9.54   MAIN                                                                  02/10/2022 14:21:01 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "uart.h"
+   4          
+   5          sbit LED = P1^0;
+   6          
+   7          void uart_service(unsigned char *buf);
+   8          void Timer0Init(void);
+   9          
+  10          void main()
+  11          {
+  12   1        Timer0Init();
+  13   1        UartInit();
+  14   1        EA = 1;
+  15   1        printf("Wait for Serial Communication Test Start.\r\n");
+  16   1        printf("Please Send a string of data:\r\n");
+  17   1        while (1)
+  18   1        {
+  19   2          uart_service(recv_buf);
+  20   2        }
+  21   1      }
+  22          
+  23          void uart_service(unsigned char *buf)
+  24          {
+  25   1        unsigned char recv_move_index;
+  26   1        if (recv_flag)
+  27   1        {
+  28   2          recv_flag = 0;
+  29   2          start_timer = 0;//关定时器
+  30   2          sendString(buf);//处理数据
+  31   2          while ((recv_cnt >= 5) && (recv_move_index <= recv_cnt))
+  32   2          {
+  33   3            if ((buf[recv_move_index + 0] == 0x55) && (buf[recv_move_index + 1] == 0xAA) && (buf[recv_move_index + 
+             -2] == 0x55))
+  34   3            {
+  35   4              if ((buf[recv_move_index + 3] == 0x01) && (buf[recv_move_index + 4] == 0x02))
+  36   4              {
+  37   5                LED = 0;
+  38   5              }
+  39   4              if ((buf[recv_move_index + 3] == 0x02) && (buf[recv_move_index + 4] == 0x01))
+  40   4              {
+  41   5                LED = 1;
+  42   5              }
+  43   4              break;
+  44   4            }
+  45   3            recv_move_index++;
+  46   3          }
+  47   2          recv_cnt = 0;
+  48   2          clr_recvbuffer(buf);//清除缓冲buffer
+  49   2        }
+  50   1      }
+  51          
+  52          void Timer0Init(void)   //1毫秒@11.0592MHz
+  53          {
+C51 COMPILER V9.54   MAIN                                                                  02/10/2022 14:21:01 PAGE 2   
+
+  54   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  55   1        TMOD &= 0xF0;   //设置定时器模式
+  56   1        TMOD |= 0x01;   //设置定时器模式
+  57   1        TL0 = 0x66;   //设置定时初值
+  58   1        TH0 = 0xFC;   //设置定时初值
+  59   1        TF0 = 0;    //清除TF0标志
+  60   1        ET0 = 1;
+  61   1        TR0 = 1;    //定时器0开始计时
+  62   1      }
+  63          
+  64          void timer0_ISR() interrupt 1
+  65          {
+  66   1        TR0 = 0;
+  67   1        if (1 == start_timer)
+  68   1        {
+  69   2          recv_timer_cnt++;//1、累加定时时间计数器
+  70   2          if (recv_timer_cnt > MAX_REV_TIME)//2、判断定时时间是否超过了设定的最大的阈值，
+  71   2                                            //超过则说明等待一段时间后没有新的数据到，
+  72   2                                            //我们判断一包数据接收完毕
+  73   2          {
+  74   3            recv_timer_cnt = 0;//3、清除定时计数器  处理数据  清除buffer（放到数据处理之后）
+  75   3      //      recv_cnt = 0;
+  76   3            recv_flag = 1;
+  77   3            
+  78   3          }
+  79   2        }
+  80   1        TL0 = 0x66;   //设置定时初值
+  81   1        TH0 = 0xFC;   //设置定时初值
+  82   1        TR0 = 1;
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    270    ----
+   CONSTANT SIZE    =     76    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
