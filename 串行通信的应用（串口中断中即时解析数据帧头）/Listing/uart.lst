@@ -1,0 +1,168 @@
+C51 COMPILER V9.54   UART                                                                  02/11/2022 22:10:56 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN ..\Output\uart.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\uart.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\uart.lst) TABS(2) OBJECT(..\Output\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          
+   3          unsigned char recv_buf[MAX_REV_NUM];
+   4          unsigned char recv_cnt;
+   5          unsigned char recv_flag;
+   6          unsigned char machine_step = 0;
+   7          unsigned int led_data;
+   8          unsigned int beep_data;
+   9          unsigned int led_cnt;
+  10          unsigned int beep_cnt;
+  11          void UartInit(void)   //9600bps@11.0592MHz
+  12          {
+  13   1        PCON &= 0x7F;   //波特率不倍速
+  14   1        SCON = 0x50;    //8位数据,可变波特率  SM0  SM1  SM2  REN  TB8  RB8  TI  RI
+  15   1                        //                    0    1    0    1    0    0   0   0
+  16   1        TMOD &= 0x0F;   //清除定时器1模式位
+  17   1        TMOD |= 0x20;   //设定定时器1为8位自动重装方式
+  18   1        TL1 = 0xFD;   //设定定时初值
+  19   1        TH1 = 0xFD;   //设定定时器重装值
+  20   1        ET1 = 0;    //禁止定时器1中断
+  21   1        ES = 1;
+  22   1        TR1 = 1;    //启动定时器1
+  23   1      }
+  24          
+  25          void sendByte(unsigned char dat)
+  26          {
+  27   1        SBUF = dat;
+  28   1        while (!TI);
+  29   1        TI = 0;
+  30   1      }
+  31          
+  32          void sendString(unsigned char *dat)//Hello World!
+  33          {
+  34   1        while (*dat != '\0')
+  35   1        {
+  36   2          sendByte(*dat++);
+  37   2        }
+  38   1      }
+  39          
+  40          char putchar(char c)
+  41          {
+  42   1        sendByte(c);
+  43   1        return c;
+  44   1      }
+  45          
+  46          void clr_recvbuffer(unsigned char *buf)
+  47          {
+  48   1        unsigned char i;
+  49   1        for(i = 0; i < MAX_REV_NUM; i++)
+  50   1        {
+  51   2          buf[i] = 0;
+  52   2        }
+  53   1      }
+  54          
+C51 COMPILER V9.54   UART                                                                  02/11/2022 22:10:56 PAGE 2   
+
+  55          /*****************************************************************
+  56          1、中断服务函数一定是一个没有返回值的函数
+  57          2、中断服务函数一定是没有参数的函数
+  58          3、中断服务函数函数名后跟关键字 interrupt
+  59          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  60          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  61          5、中断服务函数不能被主程序或其他程序所调用
+  62          6、n后面跟using m (0 - 3)工作寄存器组
+  63          *****************************************************************/
+  64          
+  65          void uart_ISR() interrupt 4
+  66          {
+  67   1        if (RI)
+  68   1        {
+  69   2          RI = 0;
+  70   2          switch(machine_step)
+  71   2          {
+  72   3            case 0:
+  73   3              recv_buf[0] = SBUF;
+  74   3              if (recv_buf[0] == 0xAA)
+  75   3              {
+  76   4                machine_step = 1;
+  77   4              }
+  78   3              else
+  79   3              {
+  80   4                machine_step = 0;
+  81   4              }
+  82   3              break;    
+  83   3            case 1:
+  84   3              recv_buf[1] = SBUF;
+  85   3              if (recv_buf[1] == 0x55)
+  86   3              {
+  87   4                machine_step = 2;
+  88   4                recv_cnt = 2;
+  89   4              }
+  90   3              else
+  91   3              {
+  92   4                machine_step = 0;
+  93   4              }
+  94   3              break;
+  95   3            case 2:
+  96   3              recv_buf[recv_cnt] = SBUF;
+  97   3              recv_cnt++;
+  98   3              if (recv_cnt > 4)
+  99   3              {
+ 100   4                machine_step = 3;
+ 101   4              }
+ 102   3              else
+ 103   3              {
+ 104   4                machine_step = 2;
+ 105   4              }
+ 106   3              break;
+ 107   3            case 3:
+ 108   3              recv_buf[recv_cnt] = SBUF;
+ 109   3              if (recv_buf[recv_cnt] == 0x0D)
+ 110   3              {
+ 111   4                switch (recv_buf[2])
+ 112   4                {
+ 113   5                  case 1:
+ 114   5                    led_data = recv_buf[3];
+ 115   5                    led_data = led_data << 8;
+ 116   5                    led_data = led_data + recv_buf[4];
+C51 COMPILER V9.54   UART                                                                  02/11/2022 22:10:56 PAGE 3   
+
+ 117   5                    led_cnt = 0;//目的是使LED点亮上述接收的数据的时间
+ 118   5                    break;
+ 119   5                  case 2:
+ 120   5                    beep_data = recv_buf[3];
+ 121   5                    beep_data = beep_data << 8;
+ 122   5                    beep_data = beep_data + recv_buf[4];
+ 123   5                    beep_cnt = beep_data;
+ 124   5                    break;
+ 125   5                  default: break;
+ 126   5                }
+ 127   4                machine_step = 0;
+ 128   4                recv_cnt = 0;
+ 129   4                recv_flag = 1;//接收完一串数据，标志位置1
+ 130   4              }
+ 131   3              break;
+ 132   3            default: break;
+ 133   3          }
+ 134   2        }
+ 135   1        if (TI)
+ 136   1        {
+ 137   2          TI = 0;
+ 138   2          
+ 139   2        }
+ 140   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    311    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     31       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
