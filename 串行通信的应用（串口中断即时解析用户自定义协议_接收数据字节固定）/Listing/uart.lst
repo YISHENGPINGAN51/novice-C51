@@ -1,0 +1,175 @@
+C51 COMPILER V9.54   UART                                                                  02/12/2022 23:22:15 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN ..\Output\uart.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\uart.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\uart.lst) TABS(2) OBJECT(..\Output\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          
+   3          unsigned char recv_buf[MAX_REV_NUM];
+   4          unsigned char recv_cnt;
+   5          unsigned char recv_flag;
+   6          unsigned char machine_step = 0;
+   7          
+   8          void UartInit(void)   //9600bps@11.0592MHz
+   9          {
+  10   1        PCON &= 0x7F;   //波特率不倍速
+  11   1        SCON = 0x50;    //8位数据,可变波特率  SM0  SM1  SM2  REN  TB8  RB8  TI  RI
+  12   1                        //                    0    1    0    1    0    0   0   0
+  13   1        TMOD &= 0x0F;   //清除定时器1模式位
+  14   1        TMOD |= 0x20;   //设定定时器1为8位自动重装方式
+  15   1        TL1 = 0xFD;   //设定定时初值
+  16   1        TH1 = 0xFD;   //设定定时器重装值
+  17   1        ET1 = 0;    //禁止定时器1中断
+  18   1        ES = 1;
+  19   1        TR1 = 1;    //启动定时器1
+  20   1      }
+  21          
+  22          void sendByte(unsigned char dat)
+  23          {
+  24   1        SBUF = dat;
+  25   1        while (!TI);
+  26   1        TI = 0;
+  27   1      }
+  28          
+  29          void sendString(unsigned char *dat)//Hello World!
+  30          {
+  31   1        while (*dat != '\0')
+  32   1        {
+  33   2          sendByte(*dat++);
+  34   2        }
+  35   1      }
+  36          
+  37          char putchar(char c)
+  38          {
+  39   1        sendByte(c);
+  40   1        return c;
+  41   1      }
+  42          
+  43          void clr_recvbuffer(unsigned char *buf)
+  44          {
+  45   1        unsigned char i;
+  46   1        for(i = 0; i < MAX_REV_NUM; i++)
+  47   1        {
+  48   2          buf[i] = 0;
+  49   2        }
+  50   1      }
+  51          
+  52          /*****************************************************************
+  53          1、中断服务函数一定是一个没有返回值的函数
+  54          2、中断服务函数一定是没有参数的函数
+C51 COMPILER V9.54   UART                                                                  02/12/2022 23:22:15 PAGE 2   
+
+  55          3、中断服务函数函数名后跟关键字 interrupt
+  56          4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  57          0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  58          5、中断服务函数不能被主程序或其他程序所调用
+  59          6、n后面跟using m (0 - 3)工作寄存器组
+  60          *****************************************************************/
+  61          
+  62          void uart_ISR() interrupt 4
+  63          {
+  64   1        unsigned char recv_data;//接收数据的中间变量
+  65   1        static unsigned char sum_check;
+  66   1        static unsigned char xor_check;
+  67   1        if (RI)
+  68   1        {
+  69   2          RI = 0;
+  70   2          recv_data = SBUF;
+  71   2          switch(machine_step)
+  72   2          {
+  73   3            case 0:
+  74   3              if (recv_data == 0x55)
+  75   3              {
+  76   4                machine_step = 1;
+  77   4                sendByte('A');
+  78   4              }
+  79   3              else
+  80   3              {
+  81   4                machine_step = 0;
+  82   4              }
+  83   3              break;    
+  84   3            case 1:
+  85   3              if (recv_data == 0xAA)
+  86   3              {
+  87   4                machine_step = 2;
+  88   4                sendByte('A');
+  89   4                recv_cnt = 0;
+  90   4              }
+  91   3              else
+  92   3              {
+  93   4                machine_step = 0;
+  94   4              }
+  95   3              break;
+  96   3            case 2:
+  97   3              //开始和校验  异或校验
+  98   3              sum_check += recv_data;
+  99   3              xor_check ^= recv_data;
+ 100   3              recv_buf[recv_cnt] = recv_data;
+ 101   3              recv_cnt++;
+ 102   3              sendByte('A');
+ 103   3              if (recv_cnt > 2)//数据固定个数
+ 104   3              {
+ 105   4                machine_step = 3;
+ 106   4              }
+ 107   3              else
+ 108   3              {
+ 109   4                machine_step = 2;
+ 110   4              }
+ 111   3              break;
+ 112   3            case 3:
+ 113   3              if (sum_check == recv_data)//和校验正确
+ 114   3              {
+ 115   4                sendByte('A');
+ 116   4                machine_step = 4;
+C51 COMPILER V9.54   UART                                                                  02/12/2022 23:22:15 PAGE 3   
+
+ 117   4              }
+ 118   3              else
+ 119   3              {
+ 120   4                machine_step = 0;
+ 121   4                printf("SUM CHECK ERROR!\r\n");
+ 122   4              }
+ 123   3              break;
+ 124   3            case 4:
+ 125   3              if (xor_check == recv_data)//异或校验正确
+ 126   3              {
+ 127   4                recv_flag = 1;//正确接收一串数据
+ 128   4                sendByte('A');
+ 129   4              }
+ 130   3              else
+ 131   3              {
+ 132   4                printf("XOR CHECK ERROR!\r\n");
+ 133   4              }
+ 134   3              machine_step = 0;
+ 135   3              recv_cnt = 0;
+ 136   3              sum_check = 0;
+ 137   3              xor_check = 0;
+ 138   3              break;
+ 139   3            default: break;
+ 140   3          }
+ 141   2        }
+ 142   1        if (TI)
+ 143   1        {
+ 144   2          TI = 0;
+ 145   2          
+ 146   2        }
+ 147   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    344    ----
+   CONSTANT SIZE    =     38    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     25       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

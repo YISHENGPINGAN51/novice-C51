@@ -1,0 +1,109 @@
+C51 COMPILER V9.54   MAIN                                                                  02/12/2022 23:22:14 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "uart.h"
+   4          
+   5          sbit LED = P1^0;
+   6          sbit BEEP = P3^7;
+   7          
+   8          unsigned int led_data;
+   9          unsigned int beep_data;
+  10          unsigned int led_cnt;
+  11          unsigned int beep_cnt;
+  12          
+  13          void Timer0Init(void);
+  14          
+  15          void main()
+  16          {
+  17   1        Timer0Init();
+  18   1        UartInit();
+  19   1        EA = 1;
+  20   1        printf("Wait for Serial Communication Test Start.\r\n");
+  21   1        printf("Please Send a Command:\r\n");
+  22   1        DelayXms(10);
+  23   1        while (1)
+  24   1        {
+  25   2          if (recv_flag == 1)
+  26   2          {
+  27   3            recv_flag = 0;
+  28   3            sendString(recv_buf);   
+  29   3            switch (recv_buf[0])
+  30   3            {
+  31   4              case 1:
+  32   4                led_data = recv_buf[1];
+  33   4                led_data = led_data << 8;
+  34   4                led_data = led_data + recv_buf[2];
+  35   4                led_cnt = 0;//目的是使LED点亮上述接收的数据的时间
+  36   4                break;
+  37   4              case 2:
+  38   4                beep_data = recv_buf[1];
+  39   4                beep_data = beep_data << 8;
+  40   4                beep_data = beep_data + recv_buf[2];
+  41   4                beep_cnt = beep_data;
+  42   4                break;
+  43   4              default:
+  44   4                clr_recvbuffer(recv_buf);
+  45   4                break;
+  46   4            }
+  47   3          }
+  48   2        }
+  49   1      }
+  50          
+  51          void Timer0Init(void)   //1毫秒@11.0592MHz
+  52          {
+  53   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  54   1        TMOD &= 0xF0;   //设置定时器模式
+C51 COMPILER V9.54   MAIN                                                                  02/12/2022 23:22:14 PAGE 2   
+
+  55   1        TMOD |= 0x01;   //设置定时器模式
+  56   1        TL0 = 0x66;   //设置定时初值
+  57   1        TH0 = 0xFC;   //设置定时初值
+  58   1        TF0 = 0;    //清除TF0标志
+  59   1        ET0 = 1;
+  60   1        TR0 = 1;    //定时器0开始计时
+  61   1      }
+  62          
+  63          void timer0_ISR() interrupt 1
+  64          {
+  65   1        TR0 = 0;
+  66   1        if (led_cnt < led_data)
+  67   1        {
+  68   2          led_cnt++;
+  69   2          LED = 0;
+  70   2        }
+  71   1        else
+  72   1        {
+  73   2          LED = 1;
+  74   2        }
+  75   1        if (beep_cnt != 0)
+  76   1        {
+  77   2          beep_cnt--;
+  78   2          BEEP = ~BEEP;
+  79   2        }
+  80   1        TL0 = 0x66;   //设置定时初值
+  81   1        TH0 = 0xFC;   //设置定时初值
+  82   1        TR0 = 1;
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    210    ----
+   CONSTANT SIZE    =     69    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
