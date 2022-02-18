@@ -1,0 +1,94 @@
+C51 COMPILER V9.54   MAIN                                                                  02/18/2022 23:59:47 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "uart.h"
+   4          #include "display.h"
+   5          
+   6          void Timer0Init(void);
+   7          
+   8          void main()
+   9          {
+  10   1        Timer0Init();
+  11   1        UartInit();
+  12   1        EA = 1;
+  13   1        printf("Wait for Serial Communication Test Start.\r\n");
+  14   1        printf("Please Send a Command:\r\n");
+  15   1        DelayXms(10);
+  16   1        while (1)
+  17   1        {
+  18   2          if (recv_flag == 1)
+  19   2          {
+  20   3            recv_flag = 0;    
+  21   3            switch (recv_buf[0])
+  22   3            {
+  23   4              case 1:
+  24   4                LEDBuf[0] = 23;
+  25   4                LEDBuf[1] = 23;
+  26   4                LEDBuf[2] = recv_buf[1] >> 4;
+  27   4                LEDBuf[3] = recv_buf[1] & 0x0F;
+  28   4                break;
+  29   4              case 2:
+  30   4                LEDBuf[0] = recv_buf[1] >> 4;
+  31   4                LEDBuf[1] = recv_buf[1] & 0x0F;
+  32   4                LEDBuf[2] = recv_buf[2] >> 4;
+  33   4                LEDBuf[3] = recv_buf[2] & 0x0F;
+  34   4                break;
+  35   4              case 3:
+  36   4                LEDBuf[0] = recv_buf[1] >> 4;
+  37   4                LEDBuf[1] = recv_buf[1] & 0x0F;
+  38   4                LEDBuf[2] = recv_buf[2] >> 4;
+  39   4                LEDBuf[3] = recv_buf[2] & 0x0F;
+  40   4                break;
+  41   4              default:
+  42   4                break;
+  43   4            }
+  44   3            clr_recvbuffer(recv_buf);
+  45   3          }
+  46   2        }
+  47   1      }
+  48          
+  49          void Timer0Init(void)   //1毫秒@11.0592MHz
+  50          {
+  51   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  52   1        TMOD &= 0xF0;   //设置定时器模式
+  53   1        TMOD |= 0x01;   //设置定时器模式
+  54   1        TL0 = 0x66;   //设置定时初值
+C51 COMPILER V9.54   MAIN                                                                  02/18/2022 23:59:47 PAGE 2   
+
+  55   1        TH0 = 0xFC;   //设置定时初值
+  56   1        TF0 = 0;    //清除TF0标志
+  57   1        ET0 = 1;
+  58   1        TR0 = 1;    //定时器0开始计时
+  59   1      }
+  60          
+  61          void timer0_ISR() interrupt 1
+  62          {
+  63   1        TR0 = 0;
+  64   1        Display();
+  65   1        TL0 = 0x66;   //设置定时初值
+  66   1        TH0 = 0xFC;   //设置定时初值
+  67   1        TR0 = 1;
+  68   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    220    ----
+   CONSTANT SIZE    =     69    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
