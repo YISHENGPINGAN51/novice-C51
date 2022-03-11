@@ -1,0 +1,81 @@
+C51 COMPILER V9.54   UART                                                                  03/11/2022 17:03:42 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN ..\Output\uart.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\uart.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\uart.lst) TABS(2) OBJECT(..\Output\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          
+   3          void UartInit(void)   //9600bps@11.0592MHz
+   4          {
+   5   1        PCON &= 0x7F;   //波特率不倍速
+   6   1        SCON = 0x50;    //8位数据,可变波特率  SM0  SM1  SM2  REN  TB8  RB8  TI  RI
+   7   1                        //                    0    1    0    1    0    0   0   0
+   8   1        TMOD &= 0x0F;   //清除定时器1模式位
+   9   1        TMOD |= 0x20;   //设定定时器1为8位自动重装方式
+  10   1        TL1 = 0xFD;   //设定定时初值
+  11   1        TH1 = 0xFD;   //设定定时器重装值
+  12   1        ET1 = 0;    //禁止定时器1中断
+  13   1      //  ES = 1;
+  14   1      //  EA = 1;
+  15   1        TR1 = 1;    //启动定时器1
+  16   1      }
+  17          
+  18          void sendByte(unsigned char dat)
+  19          {
+  20   1        SBUF = dat;
+  21   1        while (!TI);
+  22   1        TI = 0;
+  23   1      }
+  24          
+  25          void sendString(unsigned char *dat)//Hello World!
+  26          {
+  27   1        while (*dat != '\0')
+  28   1        {
+  29   2          sendByte(*dat++);
+  30   2        }
+  31   1      }
+  32          
+  33          char putchar(char c)
+  34          {
+  35   1        sendByte(c);
+  36   1        return c;
+  37   1      }
+  38          
+  39          ///*****************************************************************
+  40          //1、中断服务函数一定是一个没有返回值的函数
+  41          //2、中断服务函数一定是没有参数的函数
+  42          //3、中断服务函数函数名后跟关键字 interrupt
+  43          //4、interrupt n 0 - 4  5个中断源  8*n + 0003H
+  44          //0003H INT0    000BH T0    0013H INT1    001BH T1    0023H ES
+  45          //5、中断服务函数不能被主程序或其他程序所调用
+  46          //6、n后面跟using m (0 - 3)工作寄存器组
+  47          //*****************************************************************/
+  48          
+  49          //void uart_ISR() interrupt 4
+  50          //{
+  51          //  if (TI)
+  52          //  {
+  53          //    TI = 0;
+  54          //  }
+C51 COMPILER V9.54   UART                                                                  03/11/2022 17:03:42 PAGE 2   
+
+  55          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     74    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

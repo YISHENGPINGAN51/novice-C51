@@ -1,0 +1,92 @@
+C51 COMPILER V9.54   ULTRASOUND                                                            03/11/2022 17:03:41 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE ULTRASOUND
+OBJECT MODULE PLACED IN ..\Output\ultrasound.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\ultrasound.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(..\Listing\ultrasound.lst) TABS(2) OBJECT(..\Output\ultrasound.obj)
+
+line level    source
+
+   1          #include "ultrasound.h"
+   2          #include <intrins.h>
+   3          
+   4          void Timer0Init(void)   //11.0592MHz
+   5          {
+   6   1        TMOD &= 0xF0;   //设置定时器模式
+   7   1        TMOD |= 0x09;   //方式一    Gate置1 测脉宽    P3.2引脚  INT0脚
+   8   1        TL0 = 0x00;   //设置定时初值
+   9   1        TH0 = 0xFB;   //设置定时初值
+  10   1        TF0 = 0;    //清除TF0标志
+  11   1        TR0 = 1;    //定时器0并不会开始启动，启动由P3.2出现高电平才开始真正的启动
+  12   1      }
+  13          
+  14          void ultra_init(void)
+  15          {
+  16   1        Timer0Init();
+  17   1        Trig_P17 = 0;
+  18   1        Echo_P32 = 0;
+  19   1        Timer0Init();
+  20   1      }
+  21          
+  22          int get_distance(void)
+  23          {
+  24   1        unsigned char i;
+  25   1        unsigned char timeH, timeL;
+  26   1        unsigned int time;
+  27   1        unsigned int distance;
+  28   1        unsigned int t;
+  29   1        
+  30   1        Trig_P17 = 1;
+  31   1        for (i = 0; i < 10; i++)
+  32   1        {
+  33   2          _nop_();
+  34   2        }
+  35   1        Trig_P17 = 0;
+  36   1        
+  37   1        Echo_P32 = 1;
+  38   1        while(!Echo_P32)//等待低电平结束
+  39   1        {
+  40   2          t++;
+  41   2          _nop_();
+  42   2          if (t > 10000)//超时处理，防止硬件出错，进入死循环
+  43   2            return -1;//出错
+  44   2        }
+  45   1        t = 0;
+  46   1        while(Echo_P32)//等待高电平结束
+  47   1        {
+  48   2          t++;
+  49   2          _nop_();
+  50   2          if (t > 20000)//超时处理，防止硬件出错，进入死循环
+  51   2            return -2;//出错
+  52   2        }
+  53   1        timeH = TH0;
+  54   1        timeL = TL0;
+C51 COMPILER V9.54   ULTRASOUND                                                            03/11/2022 17:03:41 PAGE 2   
+
+  55   1        TH0 = 0;//重置初值
+  56   1        TL0 = 0;
+  57   1        
+  58   1        time = timeH * 256 + timeL;
+  59   1        if (time > 12000)
+  60   1        {
+  61   2          return -3;
+  62   2        }
+  63   1        distance = time * 1.7 / 100;// dis = t * 340m/s /2 = t * 170m/s = t * 17000 cm/10^6us
+  64   1        
+  65   1        return distance;
+  66   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    163    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
