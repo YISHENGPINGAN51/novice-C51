@@ -1,6 +1,0 @@
-"..\Output\main.obj",
-"..\Output\ultrasound.obj",
-"..\Output\uart.obj",
-"..\Output\delay.obj" 
-TO "..\Output\Ultrasound" 
-PRINT("..\Listing\Ultrasound.m51")
