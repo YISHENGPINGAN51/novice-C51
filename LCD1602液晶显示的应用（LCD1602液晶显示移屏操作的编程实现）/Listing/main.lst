@@ -1,0 +1,75 @@
+C51 COMPILER V9.54   MAIN                                                                  07/04/2022 17:07:23 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "LCD1602.h"
+   4          #include <string.h>
+   5          
+   6          void main()
+   7          {
+   8   1        unsigned char i;
+   9   1        unsigned char str[] = "Hello LCD 1602";
+  10   1        unsigned char str1[] = "Welcome to Study LCD 1602";
+  11   1        LCDInit();
+  12   1        DelayXms(10);
+  13   1      //  LCDWriteCmd(LCD_DIS_MODE_LEFT);//初始设置的字符输入模式 整屏左移
+  14   1      
+  15   1      //  while (1)
+  16   1      //  {
+  17   1      //    LCDWriteCmd(0x80);
+  18   1      //    for (i = 0; i < strlen(str); i++)
+  19   1      //    {
+  20   1      //      LCDWriteData(str[i]);
+  21   1      //      DelayXms(200);
+  22   1      //    }
+  23   1      //    
+  24   1      //    LCDWriteCmd(0xC0);
+  25   1      //    for (i = 0; i < strlen(str1); i++)
+  26   1      //    {
+  27   1      //      LCDWriteData(str1[i]);
+  28   1      //      DelayXms(200);
+  29   1      //    }
+  30   1      //  }
+  31   1      
+  32   1        LCDWriteCmd(0x80);
+  33   1        for (i = 0; i < strlen(str); i++)
+  34   1        {
+  35   2          LCDWriteData(str[i]);
+  36   2      //    DelayXms(200);
+  37   2        }
+  38   1        LCDWriteCmd(0xC0);
+  39   1        for (i = 0; i < strlen(str1); i++)
+  40   1        {
+  41   2          LCDWriteData(str1[i]);
+  42   2      //    DelayXms(200);
+  43   2        }
+  44   1        while(1)
+  45   1        {
+  46   2          LCDWriteCmd(LCD_DIS_MOVE_LEFT);
+  47   2          DelayXms(500);
+  48   2        }
+  49   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    140    ----
+   CONSTANT SIZE    =     41    ----
+C51 COMPILER V9.54   MAIN                                                                  07/04/2022 17:07:23 PAGE 2   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      42
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
