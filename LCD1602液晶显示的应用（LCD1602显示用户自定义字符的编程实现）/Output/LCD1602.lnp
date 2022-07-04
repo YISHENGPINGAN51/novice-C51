@@ -1,0 +1,5 @@
+"..\Output\main.obj",
+"..\Output\delay.obj",
+"..\Output\LCD1602.obj" 
+TO "..\Output\LCD1602" 
+PRINT("..\Listing\LCD1602.m51")
