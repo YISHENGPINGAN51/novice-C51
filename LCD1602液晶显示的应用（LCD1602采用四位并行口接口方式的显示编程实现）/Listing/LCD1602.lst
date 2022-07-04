@@ -1,0 +1,280 @@
+C51 COMPILER V9.54   LCD1602                                                               07/04/2022 23:59:48 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE LCD1602
+OBJECT MODULE PLACED IN ..\Output\LCD1602.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\LCD1602.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..
+                    -\Listing\LCD1602.lst) TABS(2) OBJECT(..\Output\LCD1602.obj)
+
+line level    source
+
+   1          #include "LCD1602.h"
+   2          
+   3          /*****************************************************
+   4          函数名：LCDReadBF
+   5          功  能；1602读忙检测
+   6          参  数；无
+   7          返回值；无
+   8          *****************************************************/
+   9          #ifndef LCD1602_4PINS
+              void LCDReadBF()
+              {
+                unsigned char state;
+                unsigned char i;
+                LCD1602_DB |= 0xFF;//高四位IO置1  低四位保持不变
+                LCD1602_RS = 0;
+                LCD1602_RW = 1;
+                do
+                {
+                  LCD1602_EN = 1;
+                  state = LCD1602_DB;
+                  LCD1602_EN = 0;
+                  i++;
+                  if (i > 50)
+                    break;
+                }  while (state & 0x80);
+              }
+              #else
+  28          void LCDReadBF()
+  29          {
+  30   1        unsigned char state;
+  31   1        unsigned char i;
+  32   1        LCD1602_DB |= 0xF0;//高四位IO置1  低四位保持不变
+  33   1        LCD1602_RS = 0;
+  34   1        LCD1602_RW = 1;
+  35   1        do
+  36   1        {
+  37   2          LCD1602_EN = 1;
+  38   2          state = LCD1602_DB & 0xF0;//读高四位
+  39   2          LCD1602_EN = 0;
+  40   2          
+  41   2          LCD1602_EN = 1;
+  42   2          state |= (LCD1602_DB & 0xF0) >> 4;//读低四位
+  43   2          LCD1602_EN = 0;
+  44   2          
+  45   2          i++;
+  46   2          if (i > 50)
+  47   2            break;
+  48   2        }  while (state & 0x80);
+  49   1      }
+  50          #endif
+  51          
+  52          /*****************************************************
+  53          函数名：LCDWriteCmd
+  54          功  能；LCD1602写指令
+C51 COMPILER V9.54   LCD1602                                                               07/04/2022 23:59:48 PAGE 2   
+
+  55          参  数；cmd 待写指令
+  56          返回值；无
+  57          *****************************************************/
+  58          #ifndef LCD1602_4PINS
+              void LCDWriteCmd(unsigned char cmd)
+              {
+                LCDReadBF();//等待忙检测，不忙时操作
+                LCD1602_RS = 0;//命令
+                LCD1602_RW = 0;//写
+                LCD1602_DB = cmd;
+                LCD1602_EN = 1;
+                LCD1602_EN = 0;
+              }
+              #else
+  69          void LCDWriteCmd(unsigned char cmd)
+  70          {
+  71   1        LCDReadBF();//等待忙检测，不忙时操作
+  72   1        LCD1602_RS = 0;//命令
+  73   1        LCD1602_RW = 0;//写
+  74   1        LCD1602_DB = cmd;//高四位
+  75   1        DelayXms(1);
+  76   1        LCD1602_EN = 1;
+  77   1        LCD1602_EN = 0;
+  78   1        LCD1602_DB = cmd << 4;//低四位
+  79   1        DelayXms(1);
+  80   1        LCD1602_EN = 1;
+  81   1        LCD1602_EN = 0;
+  82   1      }
+  83          #endif
+  84          
+  85          /*****************************************************
+  86          函数名：LCDWriteData
+  87          功  能；LCD1602写数据
+  88          参  数；dat 待写入数据
+  89          返回值；无
+  90          *****************************************************/
+  91          #ifndef LCD1602_4PINS
+              void LCDWriteData(unsigned char dat)
+              {
+                LCDReadBF();//等待忙检测，不忙时操作
+                LCD1602_RS = 1;//数据
+                LCD1602_RW = 0;//写
+                LCD1602_DB = dat;
+                LCD1602_EN = 1;
+                LCD1602_EN = 0;
+              }
+              #else
+ 102          void LCDWriteData(unsigned char dat)
+ 103          {
+ 104   1        LCDReadBF();//等待忙检测，不忙时操作
+ 105   1        LCD1602_RS = 1;//数据
+ 106   1        LCD1602_RW = 0;//写
+ 107   1        LCD1602_DB = dat;//高四位
+ 108   1        DelayXms(1);
+ 109   1        LCD1602_EN = 1;
+ 110   1        LCD1602_EN = 0;
+ 111   1        LCD1602_DB = dat << 4;//低四位
+ 112   1        DelayXms(1);
+ 113   1        LCD1602_EN = 1;
+ 114   1        LCD1602_EN = 0;
+ 115   1      }
+ 116          #endif
+C51 COMPILER V9.54   LCD1602                                                               07/04/2022 23:59:48 PAGE 3   
+
+ 117          
+ 118          /*****************************************************
+ 119          函数名：LCDInit
+ 120          功  能；LCD1602初始化
+ 121          参  数；无
+ 122          返回值；无
+ 123          *****************************************************/
+ 124          #ifndef LCD1602_4PINS
+              void LCDInit()
+              {
+                LCDWriteCmd(LCD_MODE_PIN8);//显示模式设置 2行 5*8点阵
+                LCDWriteCmd(LCD_DIS_ON);//显示开，光标关
+                LCDWriteCmd(LCD_CURSOR_RIGHT);//光标右移
+                LCDWriteCmd(LCD_SCREEN_CLR);//清屏
+              }
+              #else
+ 133          void LCDInit()
+ 134          {
+ 135   1        //看英文手册
+ 136   1        LCDWriteCmd(0x33);
+ 137   1        DelayXms(5);
+ 138   1        LCDWriteCmd(0x32);
+ 139   1        
+ 140   1        LCDWriteCmd(LCD_MODE_PIN4);//显示模式设置 2行 5*8点阵
+ 141   1        LCDWriteCmd(LCD_DIS_ON);//显示开，光标关
+ 142   1        LCDWriteCmd(LCD_CURSOR_RIGHT);//光标右移
+ 143   1        LCDWriteCmd(LCD_SCREEN_CLR);//清屏
+ 144   1      }
+ 145          #endif
+ 146          
+ 147          /*****************************************************
+ 148          函数名：LCDSetPosition
+ 149          功  能；设置显示位置  DDRAM地址
+ 150          参  数；x-列  y-行  x:0-15  y:0-1
+ 151          返回值；无
+ 152          *****************************************************/
+ 153          void LCDSetPosition(unsigned char x, unsigned char y)
+ 154          {
+ 155   1        if (0 == y)
+ 156   1        {
+ 157   2          LCDWriteCmd(0x80 | x);
+ 158   2        }
+ 159   1        else
+ 160   1        {
+ 161   2          LCDWriteCmd(0x80 | (0x40 + x));
+ 162   2        }
+ 163   1      }
+ 164          
+ 165          /*****************************************************
+ 166          函数名：LCDShowStr
+ 167          功  能；显示字符
+ 168          参  数；x-列  y-行  *str-待显示字符数据
+ 169          返回值；无
+ 170          *****************************************************/
+ 171          void LCDShowStr(unsigned char x, unsigned char y, unsigned char *str)
+ 172          {
+ 173   1        LCDSetPosition(x, y);
+ 174   1        while (*str != '\0')
+ 175   1        {
+ 176   2          LCDWriteData(*str++);
+ 177   2        }
+ 178   1      }
+C51 COMPILER V9.54   LCD1602                                                               07/04/2022 23:59:48 PAGE 4   
+
+ 179          
+ 180          /*****************************************************
+ 181          函数名：LCDWriteCGRAM
+ 182          功  能；显示自定义字符
+ 183          参  数；*str-自定义字符数据
+ 184          返回值；无
+ 185          *****************************************************/
+ 186          void LCDWriteCGRAM(unsigned char *str)
+ 187          {
+ 188   1        unsigned char i;
+ 189   1        LCDWriteCmd(LCD_SET_CGRAM_ADDR);//设定 CGRAM 地址
+ 190   1        for (i = 0; i < 8; i++)
+ 191   1        {
+ 192   2          LCDWriteData(*str++);//写入自定义图形
+ 193   2        }
+ 194   1        LCDWriteCmd(0xC0);//设定屏幕上的显示位置
+ 195   1        LCDWriteData(0x00);//从 CGRAM 中取出自定义图形显示
+ 196   1      }
+ 197          
+ 198          /*****************************************************
+ 199          函数名：LCDSetChar
+ 200          功  能；显示自定义字符
+ 201          参  数；x-列  y-行  pos-CGRAM位置  *str-自定义字符数据
+ 202          返回值；无
+ 203          *****************************************************/
+ 204          void LCDSetChar(unsigned char x, unsigned char y, unsigned char pos, unsigned char *str)//x:0~F y:0/1 pos:
+             -0~7
+ 205          {
+ 206   1        unsigned char i;
+ 207   1        //先构造自定义字符 确定位置 CGRAM
+ 208   1        for (i = 0; i < 8; i++)
+ 209   1        {
+ 210   2          LCDWriteCmd(LCD_SET_CGRAM_ADDR + pos*8 + i);
+ 211   2          LCDWriteData(*(str+i));
+ 212   2        }
+ 213   1        //显示
+ 214   1        LCDSetPosition(x, y);//设置显示位置 DDRAM
+ 215   1        LCDWriteData(0x00 + pos);//显示代码
+ 216   1      }
+ 217          
+ 218          /*****************************************************
+ 219          函数名：IntegerToStr
+ 220          功  能；整形数据转字符串
+ 221          参  数；dat-整形数据  *str-字符数据
+ 222          返回值；len-字符数组的字符个数  长度
+ 223          *****************************************************/
+ 224          unsigned char IntegerToStr(long dat, unsigned char *str)
+ 225          {
+ 226   1        unsigned char i;
+ 227   1        unsigned char len;
+ 228   1        unsigned char buf[11];
+ 229   1        if (dat < 0)
+ 230   1        {
+ 231   2          dat = -dat;//如果是负数，取绝对值
+ 232   2          *str++ = '-';
+ 233   2          len++;
+ 234   2        }
+ 235   1        do
+ 236   1        {
+ 237   2          buf[i++] = dat % 10 + '0';//等价于dat % 10 + 0x30;  buf[0] = '8' buf[1] = '7' buf[2] = '6'
+ 238   2          dat /= 10;
+ 239   2        }  while (dat > 0);
+C51 COMPILER V9.54   LCD1602                                                               07/04/2022 23:59:48 PAGE 5   
+
+ 240   1        len += i;
+ 241   1        while (i-- > 0)
+ 242   1        {
+ 243   2          *str++ = buf[i];
+ 244   2        }
+ 245   1        *str = '\0';
+ 246   1        return len;
+ 247   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    512    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      38
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
