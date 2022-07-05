@@ -1,0 +1,56 @@
+C51 COMPILER V9.54   MENU                                                                  07/05/2022 14:40:11 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MENU
+OBJECT MODULE PLACED IN ..\Output\menu.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\menu.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\menu.lst) TABS(2) OBJECT(..\Output\menu.obj)
+
+line level    source
+
+   1          #include "menu.h"
+   2          
+   3          extern unsigned char sec, min, hour;
+   4          
+   5          void Startmenu()
+   6          {
+   7   1        LCDShowStr(4, 0, "LCD CLOCK");
+   8   1        LCDShowStr(2, 1, "Beijing Time");
+   9   1      }
+  10          
+  11          void LCDShowSec()
+  12          {
+  13   1        LCDSetPosition(10, 1);
+  14   1        LCDWriteData(sec/10 + '0');
+  15   1        LCDWriteData(sec%10 + '0');
+  16   1      }
+  17          
+  18          void LCDShowMin()
+  19          {
+  20   1        LCDSetPosition(7, 1);
+  21   1        LCDWriteData(min/10 + '0');
+  22   1        LCDWriteData(min%10 + '0');
+  23   1        LCDWriteData(':');
+  24   1      }
+  25          
+  26          void LCDShowHour()
+  27          {
+  28   1        LCDSetPosition(4, 1);
+  29   1        LCDWriteData(hour/10 + '0');
+  30   1        LCDWriteData(hour%10 + '0');
+  31   1        LCDWriteData(':');
+  32   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    135    ----
+   CONSTANT SIZE    =     23    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
