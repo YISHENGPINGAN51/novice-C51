@@ -1,0 +1,6 @@
+"..\Output\main.obj",
+"..\Output\delay.obj",
+"..\Output\LCD1602.obj",
+"..\Output\OneWire.obj" 
+TO "..\Output\DS18B20" 
+PRINT("..\Output\DS18B20.m51") DISABLEWARNING (16) 
