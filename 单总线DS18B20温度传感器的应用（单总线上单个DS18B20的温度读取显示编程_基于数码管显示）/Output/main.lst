@@ -1,0 +1,120 @@
+C51 COMPILER V9.54   MAIN                                                                  07/11/2022 18:48:09 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Ou
+                    -tput\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "display.h"
+   4          #include "DS18B20.h"
+   5          
+   6          void Timer0Init(void);
+   7          unsigned char flag;
+   8          
+   9          void main()
+  10          {
+  11   1        unsigned char ack;
+  12   1        int temp;//保存接收温度数据
+  13   1        int intTemp, decTemp;//分离温度数据的整数部分和小数部分
+  14   1        
+  15   1        Timer0Init();
+  16   1        Start18B20();
+  17   1        
+  18   1        while (1)
+  19   1        {
+  20   2          if (flag)
+  21   2          {
+  22   3            flag = 0;
+  23   3            ack = Read18B20(&temp);
+  24   3            if (ack)
+  25   3            {
+  26   4              intTemp = temp >> 4;//保留整数部分
+  27   4              decTemp = temp & 0x0f;
+  28   4              decTemp = (decTemp * 10) / 16;//*0.0625  放大10倍  小数点后1位
+  29   4              
+  30   4              if (intTemp < 0)
+  31   4              {
+  32   5                intTemp = -intTemp;
+  33   5                LEDBuf[0] = 22;
+  34   5                if (decTemp % 10 != 0)  //DS18B20步进0.5无问题
+  35   5                {
+  36   6                  intTemp = intTemp - 1;
+  37   6                }
+  38   5              }
+  39   4              else
+  40   4              {
+  41   5                if (intTemp >= 100)
+  42   5                {
+  43   6                  LEDBuf[0] = intTemp / 100;
+  44   6                }
+  45   5                else
+  46   5                {
+  47   6                  LEDBuf[0] = 23;  //不大于100℃ 关掉百位
+  48   6                }
+  49   5              }
+  50   4              //无论正负都需要显示
+  51   4              if (intTemp >= 10)  //十位
+  52   4              {
+  53   5                LEDBuf[1] = intTemp / 10 % 10;
+  54   5              }
+C51 COMPILER V9.54   MAIN                                                                  07/11/2022 18:48:09 PAGE 2   
+
+  55   4              else
+  56   4              {
+  57   5                LEDBuf[1] = 23;  //不大于10℃ 关掉十位
+  58   5              }
+  59   4              LEDBuf[2] = intTemp % 10;  //个位
+  60   4              LEDBuf[3] = decTemp;  //小数位
+  61   4            }
+  62   3            Start18B20();
+  63   3          }
+  64   2        }
+  65   1      }
+  66          
+  67          void Timer0Init(void)   //10毫秒@12.000MHz
+  68          {
+  69   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  70   1        TMOD &= 0xF0;   //设置定时器模式
+  71   1        TMOD |= 0x01;   //设置定时器模式
+  72   1        TL0 = 0xF0;   //设置定时初始值
+  73   1        TH0 = 0xD8;   //设置定时初始值
+  74   1        TF0 = 0;    //清除TF0标志
+  75   1        ET0 = 1;
+  76   1        EA = 1;
+  77   1        TR0 = 1;    //定时器0开始计时
+  78   1      }
+  79          
+  80          void Timer0_ISR() interrupt 1
+  81          {
+  82   1        static unsigned char timer0Cnt = 0;
+  83   1        TR0 = 0;
+  84   1        TL0 = 0xF0;   //设置定时初始值
+  85   1        TH0 = 0xD8;   //设置定时初始值
+  86   1        Display();
+  87   1        timer0Cnt++;
+  88   1        if (timer0Cnt >= 100)
+  89   1        {
+  90   2          timer0Cnt = 0;
+  91   2          flag = 1;
+  92   2        }
+  93   1        TR0 = 1;
+  94   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    301    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

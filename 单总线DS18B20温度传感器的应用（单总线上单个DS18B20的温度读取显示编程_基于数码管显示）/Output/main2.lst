@@ -1,0 +1,115 @@
+C51 COMPILER V9.54   MAIN2                                                                 07/11/2022 18:22:56 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN2
+OBJECT MODULE PLACED IN ..\Output\main2.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\O
+                    -utput\main2.lst) TABS(2) OBJECT(..\Output\main2.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "display.h"
+   4          #include "DS18B20.h"
+   5          
+   6          unsigned char flag = 0;    //1s定时标志
+   7          
+   8          void Timer0Init(void);    //10毫秒@12.000MHz
+   9          
+  10          void main()
+  11          {
+  12   1        bit ack;
+  13   1        int temp;    //读取到的当前温度值
+  14   1        float tmp;
+  15   1        Timer0Init();   //10毫秒@12.000MHz
+  16   1        EA = 1;    //开总中断
+  17   1        Start18B20();    //启动DS18B20
+  18   1        while (1)
+  19   1        {
+  20   2          if (flag)    //每秒更新一次温度
+  21   2          {
+  22   3            flag = 0;
+  23   3            ack = Read18B20(&temp);    //读取当前温度
+  24   3            if (ack)                      //读取成功时，刷新当前温度显示
+  25   3            {
+  26   4              if (temp < 0)       //当温度值为负数
+  27   4              {
+  28   5                LEDBuf[0] = 22;  //显示负
+  29   5                temp = ~temp;  //补码存放，取反加一求原码
+  30   5                temp = temp + 1;
+  31   5                tmp = temp;
+  32   5                temp = tmp * 0.0625 * 10;  //小数点后保留一位    放大了10倍
+  33   5              }
+  34   4              else
+  35   4              {
+  36   5                tmp = temp;              //正数
+  37   5                temp = tmp * 0.0625 * 10;  //小数点后保留一位
+  38   5                if (temp >= 1000)//如果温度大于等于100℃
+  39   5                {
+  40   6                  LEDBuf[0] = temp / 1000;
+  41   6                }
+  42   5                else
+  43   5                {
+  44   6                  LEDBuf[0] = 23;
+  45   6                }
+  46   5              }
+  47   4              if (temp >= 100)//如果温度大于等于10℃
+  48   4              {
+  49   5                LEDBuf[1] = temp / 100 % 10;
+  50   5              }
+  51   4              else
+  52   4              {
+  53   5                LEDBuf[1] = 23;
+  54   5              }
+C51 COMPILER V9.54   MAIN2                                                                 07/11/2022 18:22:56 PAGE 2   
+
+  55   4              LEDBuf[2] = temp / 10 % 10;
+  56   4              LEDBuf[3] = temp % 10;//小数位
+  57   4              Start18B20();    //重新启动下一次转换
+  58   4            }
+  59   3          }
+  60   2        }
+  61   1      }
+  62          
+  63          void Timer0Init(void)   //10毫秒@12.000MHz
+  64          {
+  65   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  66   1        TMOD &= 0xF0;   //设置定时器模式
+  67   1        TMOD |= 0x01;   //设置定时器模式
+  68   1        TL0 = 0xF0;   //设置定时初始值
+  69   1        TH0 = 0xD8;   //设置定时初始值
+  70   1        TF0 = 0;    //清除TF0标志
+  71   1        ET0 = 1;    //使能T0中断
+  72   1        TR0 = 1;    //定时器0开始计时
+  73   1      }
+  74          
+  75          void Timer0_ISR() interrupt 1
+  76          {
+  77   1        static unsigned char timer0Cnt = 0;
+  78   1        TR0 = 0;
+  79   1        TL0 = 0xF0;   //设置定时初始值
+  80   1        TH0 = 0xD8;   //设置定时初始值
+  81   1        Display();
+  82   1        timer0Cnt++;
+  83   1        if (timer0Cnt >= 100)
+  84   1        {
+  85   2          timer0Cnt = 0;
+  86   2          flag = 1;
+  87   2        }
+  88   1        TR0 = 1;
+  89   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    344    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
