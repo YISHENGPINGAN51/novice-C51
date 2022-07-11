@@ -1,0 +1,136 @@
+C51 COMPILER V9.54   MAIN2                                                                 07/11/2022 17:56:49 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN2
+OBJECT MODULE PLACED IN ..\Output\main2.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\O
+                    -utput\main2.lst) TABS(2) OBJECT(..\Output\main2.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "LCD1602.h"
+   4          #include "DS18B20.h"
+   5          
+   6          unsigned char flag = 0;    //1s定时标志
+   7          
+   8          void Timer0Init(void);    //10毫秒@12.000MHz
+   9          
+  10          void main()
+  11          {
+  12   1        bit ack;
+  13   1        int temp;    //读取到的当前温度值
+  14   1        float tmp;
+  15   1        Timer0Init();   //10毫秒@12.000MHz
+  16   1        EA = 1;    //开总中断
+  17   1        Start18B20();    //启动DS18B20
+  18   1        LCDInit();    //初始化液晶
+  19   1        DelayXms(10);
+  20   1        while (1)
+  21   1        {
+  22   2          if (flag)    //每秒更新一次温度
+  23   2          {
+  24   3            flag = 0;
+  25   3            ack = Read18B20(&temp);    //读取当前温度
+  26   3            if (ack)                      //读取成功时，刷新当前温度显示
+  27   3            {
+  28   4              if (temp < 0)       //当温度值为负数
+  29   4              {
+  30   5                LCDWriteCmd(0x80);    //写地址 80表示初始地址
+  31   5                LCDWriteData('-');    //显示负
+  32   5                temp = ~temp;  //补码存放，取反加一求原码
+  33   5                temp = temp + 1;
+  34   5                tmp = temp;
+  35   5                temp = tmp * 0.0625 * 100;  //小数点后保留两位
+  36   5              }
+  37   4              else
+  38   4              {
+  39   5                LCDWriteCmd(0x80);    //写地址 80表示初始地址
+  40   5                LCDWriteData(' ');    //显示空
+  41   5                tmp = temp;              //正数
+  42   5                temp = tmp * 0.0625 * 100;  //小数点后保留两位
+  43   5              }
+  44   4              if (temp >= 10000)//如果温度大于等于100℃
+  45   4              {
+  46   5                LCDWriteCmd(0x82);    //写地址 82表示初始地址
+  47   5                LCDWriteData('0' + temp / 10000);    //百位
+  48   5                LCDWriteData('0' + temp % 10000 / 1000);    //十位
+  49   5                LCDWriteData('0' + temp % 1000 / 100);    //个位
+  50   5                LCDWriteData('.');    //显示  ‘.'
+  51   5                LCDWriteData('0' + temp % 100 / 10);    //显示小数点
+  52   5                LCDWriteData('0' + temp % 10);    //显示小数点
+  53   5              }
+  54   4              else //温度小于100
+C51 COMPILER V9.54   MAIN2                                                                 07/11/2022 17:56:49 PAGE 2   
+
+  55   4              {
+  56   5                if (temp >= 1000)//如果温度大于等于10℃
+  57   5                {
+  58   6                  LCDWriteCmd(0x82);    //写地址 82表示初始地址
+  59   6                  LCDWriteData('0' + temp % 10000 / 1000);    //十位
+  60   6                  LCDWriteData('0' + temp % 1000 / 100);    //个位
+  61   6                  LCDWriteData('.');    //显示  ‘.'
+  62   6                  LCDWriteData('0' + temp % 100 / 10);    //显示小数点
+  63   6                  LCDWriteData('0' + temp % 10);    //显示小数点
+  64   6                  LCDWriteData(' ');    //数据对齐，清除原有的显示
+  65   6                }
+  66   5                else
+  67   5                {
+  68   6                  LCDWriteCmd(0x82);    //写地址 82表示初始地址
+  69   6                  LCDWriteData('0' + temp % 1000 / 100);    //个位
+  70   6                  LCDWriteData('.');    //显示  ‘.'
+  71   6                  LCDWriteData('0' + temp % 100 / 10);    //显示小数点
+  72   6                  LCDWriteData('0' + temp % 10);    //显示小数点
+  73   6                  LCDWriteData(' ');    //数据对齐，清除原有的显示
+  74   6                  LCDWriteData(' ');    //数据对齐，清除原有的显示
+  75   6                }
+  76   5              }
+  77   4              Start18B20();    //重新启动下一次转换
+  78   4            }
+  79   3          }
+  80   2        }
+  81   1      }
+  82          
+  83          void Timer0Init(void)   //10毫秒@12.000MHz
+  84          {
+  85   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  86   1        TMOD &= 0xF0;   //设置定时器模式
+  87   1        TMOD |= 0x01;   //设置定时器模式
+  88   1        TL0 = 0xF0;   //设置定时初始值
+  89   1        TH0 = 0xD8;   //设置定时初始值
+  90   1        TF0 = 0;    //清除TF0标志
+  91   1        ET0 = 1;    //使能T0中断
+  92   1        TR0 = 1;    //定时器0开始计时
+  93   1      }
+  94          
+  95          void Timer0_ISR() interrupt 1
+  96          {
+  97   1        static unsigned char timer0Cnt = 0;
+  98   1        TR0 = 0;
+  99   1        TL0 = 0xF0;   //设置定时初始值
+ 100   1        TH0 = 0xD8;   //设置定时初始值
+ 101   1        timer0Cnt++;
+ 102   1        if (timer0Cnt >= 100)
+ 103   1        {
+ 104   2          timer0Cnt = 0;
+ 105   2          flag = 1;
+ 106   2        }
+ 107   1        TR0 = 1;
+ 108   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    572    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       6
+C51 COMPILER V9.54   MAIN2                                                                 07/11/2022 17:56:49 PAGE 3   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
