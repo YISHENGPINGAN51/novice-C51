@@ -1,0 +1,77 @@
+C51 COMPILER V9.54   DS18B20                                                               07/13/2022 02:11:42 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN ..\Output\DS18B20.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\DS18B20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..
+                    -\Output\DS18B20.lst) TABS(2) OBJECT(..\Output\DS18B20.obj)
+
+line level    source
+
+   1          #include "DS18B20.h"
+   2          
+   3          bit Start18B20()
+   4          {
+   5   1        bit ack;
+   6   1        //1、初始化
+   7   1        ack = OneWireRst();
+   8   1        if (ack == 0)
+   9   1        {
+  10   2          //2、ROM指令
+  11   2          WriteOneWire(SKIP_ROM);
+  12   2          //3、功能指令 启动温度转换
+  13   2          WriteOneWire(CONVERT_T);
+  14   2        }
+  15   1        return ~ack;
+  16   1      }
+  17          
+  18          bit Read18B20(int *temp)
+  19          {
+  20   1        bit ack;
+  21   1        unsigned char MSB, LSB;
+  22   1        //1、初始化
+  23   1        ack = OneWireRst();
+  24   1        if (ack == 0)
+  25   1        {
+  26   2          //2、ROM指令
+  27   2          WriteOneWire(SKIP_ROM);
+  28   2          //3、功能指令 启动温度转换
+  29   2          WriteOneWire(READ_REGISTER);
+  30   2          //4、读转换结果  根据功能指令来确定
+  31   2          LSB = ReadOneWire();
+  32   2          MSB = ReadOneWire();
+  33   2          *temp = ((int)MSB << 8) + LSB;
+  34   2        }
+  35   1        return ~ack;
+  36   1      }
+  37          
+  38          void ReadRomCode(unsigned char *romcode)
+  39          {
+  40   1        bit ack;
+  41   1        unsigned char i;
+  42   1        ack = OneWireRst();//获取复位脉冲
+  43   1        if (ack == 0)
+  44   1        {
+  45   2          WriteOneWire(READ_ROM);//读取ROM指令
+  46   2          for (i = 0; i < 8; i++)
+  47   2          {
+  48   3            *(romcode + i) = ReadOneWire();//romcode[i] 读64位ROM码
+  49   3          }
+  50   2        }
+  51   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.54   DS18B20                                                               07/13/2022 02:11:42 PAGE 2   
+
+   CODE SIZE        =    130    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

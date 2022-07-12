@@ -1,0 +1,80 @@
+C51 COMPILER V9.54   MAIN2                                                                 07/13/2022 02:11:42 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN2
+OBJECT MODULE PLACED IN ..\Output\main2.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\O
+                    -utput\main2.lst) TABS(2) OBJECT(..\Output\main2.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "LCD1602.h"
+   4          #include "DS18B20.h"
+   5          #include "uart.h"
+   6          
+   7          void LCDShowRomCode(unsigned char *romcode, unsigned char num);
+   8          unsigned char code rom1[] = { 0x28, 0x30, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0x8E };
+   9          unsigned char code rom2[] = { 0x28, 0x31, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xB9 };
+  10          unsigned char code rom3[] = { 0x28, 0x32, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xE0 };
+  11          unsigned char code rom4[] = { 0x28, 0x33, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xD7 };
+  12          
+  13          unsigned char romcode[8];
+  14          
+  15          void main()
+  16          {
+  17   1        unsigned char i;
+  18   1        LCDInit();    //≥ı ºªØ“∫æß
+  19   1        UartInit();
+  20   1        DelayXms(10);
+  21   1        ReadRomCode(romcode);
+  22   1        LCDShowRomCode(romcode, 1);
+  23   1        for (i = 0; i < 8; i++)
+  24   1        {
+  25   2          sendByte(romcode[i]);
+  26   2        }
+  27   1        while (1);
+  28   1      }
+  29          
+  30          void LCDShowRomCode(unsigned char *romcode, unsigned char num)
+  31          {
+  32   1        unsigned char i;
+  33   1        unsigned char temp;
+  34   1        
+  35   1        LCDSetPosition(7, 0);
+  36   1        LCDWriteData('#');
+  37   1        LCDWriteData(num + '0');
+  38   1        
+  39   1        LCDSetPosition(0, 1);
+  40   1        for (i = 0; i < 8; i++)//eg: 2830C5B8000000(28 + B8 C5 30)
+  41   1        {
+  42   2          temp = romcode[i] >> 4;
+  43   2          if (temp < 10)
+  44   2            LCDWriteData(temp + '0');
+  45   2          else
+  46   2            LCDWriteData(temp + '7');//ABCDEF
+  47   2          
+  48   2          temp = romcode[i] & 0x0F;
+  49   2          if (temp < 10)
+  50   2            LCDWriteData(temp + '0');
+  51   2          else
+  52   2            LCDWriteData(temp + '7');//ABCDEF
+  53   2        }
+  54   1      }
+C51 COMPILER V9.54   MAIN2                                                                 07/13/2022 02:11:42 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    178    ----
+   CONSTANT SIZE    =     32    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

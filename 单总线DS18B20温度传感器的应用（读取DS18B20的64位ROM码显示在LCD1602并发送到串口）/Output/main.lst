@@ -1,0 +1,101 @@
+C51 COMPILER V9.54   MAIN                                                                  07/11/2022 16:47:44 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Ou
+                    -tput\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "delay.h"
+   3          #include "LCD1602.h"
+   4          #include "DS18B20.h"
+   5          
+   6          void Timer0Init(void);
+   7          unsigned char flag;
+   8          
+   9          void main()
+  10          {
+  11   1        unsigned char ack;
+  12   1        int temp;//保存接收温度数据
+  13   1        int intTemp, decTemp;//分离温度数据的整数部分和小数部分
+  14   1        unsigned char str[12];//保存数据转换成的字符串   ASCII
+  15   1        unsigned char len;
+  16   1        
+  17   1        LCDInit();
+  18   1        Timer0Init();
+  19   1        Start18B20();
+  20   1        DelayXms(10);
+  21   1        while (1)
+  22   1        {
+  23   2          if (flag)
+  24   2          {
+  25   3            flag = 0;
+  26   3            ack = Read18B20(&temp);
+  27   3            if (ack)
+  28   3            {
+  29   4              intTemp = temp >> 4;//保留整数部分
+  30   4              decTemp = temp & 0x0f;
+  31   4              len = IntegerToStr(intTemp, str);
+  32   4              str[len++] = '.';
+  33   4              
+  34   4              decTemp = (decTemp * 100) / 16;//*0.0625
+  35   4              str[len++] = decTemp / 10 + '0';//小数部分
+  36   4              str[len++] = decTemp % 10 + '0';
+  37   4              while (len < 6)
+  38   4              {
+  39   5                str[len++] = ' ';
+  40   5              }
+  41   4              str[len] = '\0';
+  42   4              LCDShowStr(0, 0, str);
+  43   4            }
+  44   3            Start18B20();
+  45   3          }
+  46   2        }
+  47   1      }
+  48          
+  49          void Timer0Init(void)   //10毫秒@12.000MHz
+  50          {
+  51   1      //  AUXR &= 0x7F;   //定时器时钟12T模式
+  52   1        TMOD &= 0xF0;   //设置定时器模式
+  53   1        TMOD |= 0x01;   //设置定时器模式
+  54   1        TL0 = 0xF0;   //设置定时初始值
+C51 COMPILER V9.54   MAIN                                                                  07/11/2022 16:47:44 PAGE 2   
+
+  55   1        TH0 = 0xD8;   //设置定时初始值
+  56   1        TF0 = 0;    //清除TF0标志
+  57   1        ET0 = 1;
+  58   1        EA = 1;
+  59   1        TR0 = 1;    //定时器0开始计时
+  60   1      }
+  61          
+  62          void Timer0_ISR() interrupt 1
+  63          {
+  64   1        static unsigned char timer0Cnt = 0;
+  65   1        TR0 = 0;
+  66   1        TL0 = 0xF0;   //设置定时初始值
+  67   1        TH0 = 0xD8;   //设置定时初始值
+  68   1        timer0Cnt++;
+  69   1        if (timer0Cnt >= 100)
+  70   1        {
+  71   2          timer0Cnt = 0;
+  72   2          flag = 1;
+  73   2        }
+  74   1        TR0 = 1;
+  75   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    244    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
