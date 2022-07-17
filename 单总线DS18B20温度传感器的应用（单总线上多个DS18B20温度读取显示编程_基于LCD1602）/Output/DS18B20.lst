@@ -1,0 +1,141 @@
+C51 COMPILER V9.54   DS18B20                                                               07/17/2022 20:02:47 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN ..\Output\DS18B20.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\DS18B20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..
+                    -\Output\DS18B20.lst) TABS(2) OBJECT(..\Output\DS18B20.obj)
+
+line level    source
+
+   1          #include "DS18B20.h"
+   2          
+   3          unsigned char code rom1[] = { 0x28, 0x30, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0x8E };
+   4          unsigned char code rom2[] = { 0x28, 0x31, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xB9 };
+   5          unsigned char code rom3[] = { 0x28, 0x32, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xE0 };
+   6          unsigned char code rom4[] = { 0x28, 0x33, 0xC5, 0xB8, 0x00, 0x00, 0x00, 0xD7 };
+   7          
+   8          bit Start18B20()
+   9          {
+  10   1        bit ack;
+  11   1        //1、初始化
+  12   1        ack = OneWireRst();
+  13   1        if (ack == 0)
+  14   1        {
+  15   2          //2、ROM指令
+  16   2          WriteOneWire(SKIP_ROM);
+  17   2          //3、功能指令 启动温度转换
+  18   2          WriteOneWire(CONVERT_T);
+  19   2        }
+  20   1        return ~ack;
+  21   1      }
+  22          
+  23          bit Read18B20(int *temp)
+  24          {
+  25   1        bit ack;
+  26   1        unsigned char MSB, LSB;
+  27   1        //1、初始化
+  28   1        ack = OneWireRst();
+  29   1        if (ack == 0)
+  30   1        {
+  31   2          //2、ROM指令
+  32   2          WriteOneWire(SKIP_ROM);
+  33   2          //3、功能指令 读取转换结果
+  34   2          WriteOneWire(READ_REGISTER);
+  35   2          //4、读转换结果  根据功能指令来确定
+  36   2          LSB = ReadOneWire();
+  37   2          MSB = ReadOneWire();
+  38   2          *temp = ((int)MSB << 8) + LSB;
+  39   2        }
+  40   1        return ~ack;
+  41   1      }
+  42          
+  43          void ReadRomCode(unsigned char *romcode)
+  44          {
+  45   1        bit ack;
+  46   1        unsigned char i;
+  47   1        ack = OneWireRst();//获取复位脉冲
+  48   1        if (ack == 0)
+  49   1        {
+  50   2          WriteOneWire(READ_ROM);//读取ROM指令
+  51   2          for (i = 0; i < 8; i++)
+  52   2          {
+  53   3            *(romcode + i) = ReadOneWire();//romcode[i] 读64位ROM码
+  54   3          }
+C51 COMPILER V9.54   DS18B20                                                               07/17/2022 20:02:47 PAGE 2   
+
+  55   2        }
+  56   1      }
+  57          
+  58          /*****************************************************
+  59          函数名：MatchRomCode
+  60          功  能：根据参数 匹配不同的18B20的64位ROM码 rom1[] rom2[] rom3[] rom4[]
+  61          参  数：unsigned char n(范围：1 - 4)
+  62          返回值：无
+  63          *****************************************************/
+  64          void MatchRomCode(unsigned char n)
+  65          {
+  66   1        unsigned char i;
+  67   1        WriteOneWire(MATH_ROM);
+  68   1        switch (n)
+  69   1        {
+  70   2          case 1:
+  71   2            for (i = 0; i < 8; i++)
+  72   2              WriteOneWire(rom1[i]);
+  73   2            break;
+  74   2          case 2:
+  75   2            for (i = 0; i < 8; i++)
+  76   2              WriteOneWire(rom2[i]);
+  77   2            break;
+  78   2          case 3:
+  79   2            for (i = 0; i < 8; i++)
+  80   2              WriteOneWire(rom3[i]);
+  81   2            break;
+  82   2          case 4:
+  83   2            for (i = 0; i < 8; i++)
+  84   2              WriteOneWire(rom4[i]);
+  85   2            break;
+  86   2          default: break;
+  87   2        }
+  88   1      }
+  89          
+  90          void Get18B20Temp(int *temp, unsigned char n)
+  91          {
+  92   1        bit ack;
+  93   1        unsigned char MSB, LSB;
+  94   1        //1、初始化
+  95   1        ack = OneWireRst();
+  96   1        while(ack);
+  97   1        //2、ROM指令 匹配
+  98   1        MatchRomCode(n);
+  99   1        //3、功能指令 启动温度转换
+ 100   1        WriteOneWire(CONVERT_T);
+ 101   1        
+ 102   1        //1、初始化
+ 103   1        ack = OneWireRst();
+ 104   1        while(ack);
+ 105   1        //2、ROM指令
+ 106   1        MatchRomCode(n);
+ 107   1        //3、功能指令 读取转换结果
+ 108   1        WriteOneWire(READ_REGISTER);
+ 109   1        //4、读转换结果  根据功能指令来确定
+ 110   1        LSB = ReadOneWire();
+ 111   1        MSB = ReadOneWire();
+ 112   1        *temp = ((int)MSB << 8) + LSB;
+ 113   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.54   DS18B20                                                               07/17/2022 20:02:47 PAGE 3   
+
+   CODE SIZE        =    318    ----
+   CONSTANT SIZE    =     32    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      15
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       4
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
