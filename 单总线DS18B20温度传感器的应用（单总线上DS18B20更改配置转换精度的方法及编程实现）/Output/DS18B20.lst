@@ -1,0 +1,93 @@
+C51 COMPILER V9.54   DS18B20                                                               07/18/2022 01:07:14 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN ..\Output\DS18B20.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\DS18B20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..
+                    -\Output\DS18B20.lst) TABS(2) OBJECT(..\Output\DS18B20.obj)
+
+line level    source
+
+   1          #include "DS18B20.h"
+   2          
+   3          bit Start18B20()
+   4          {
+   5   1        bit ack;
+   6   1        //1、初始化
+   7   1        ack = OneWireRst();
+   8   1        if (ack == 0)
+   9   1        {
+  10   2          //2、ROM指令
+  11   2          WriteOneWire(SKIP_ROM);
+  12   2          //3、功能指令 启动温度转换
+  13   2          WriteOneWire(CONVERT_T);
+  14   2        }
+  15   1        return ~ack;
+  16   1      }
+  17          
+  18          bit Read18B20(int *temp)
+  19          {
+  20   1        bit ack;
+  21   1        unsigned char MSB, LSB;
+  22   1        //1、初始化
+  23   1        ack = OneWireRst();
+  24   1        if (ack == 0)
+  25   1        {
+  26   2          //2、ROM指令
+  27   2          WriteOneWire(SKIP_ROM);
+  28   2          //3、功能指令 启动温度转换
+  29   2          WriteOneWire(READ_REGISTER);
+  30   2          //4、读转换结果  根据功能指令来确定
+  31   2          LSB = ReadOneWire();
+  32   2          MSB = ReadOneWire();
+  33   2          *temp = ((int)MSB << 8) + LSB;
+  34   2        }
+  35   1        return ~ack;
+  36   1      }
+  37          
+  38          /*****************************************************
+  39          函数名：Config18B20
+  40          功  能：配置18B20转换精度
+  41          参  数：unsigned char dat
+  42                   9位分辨率     0.5       0x1F
+  43                  10位分辨率     0.25      0x3F
+  44                  11位分辨率     0.125     0x5F
+  45                  12位分辨率     0.0625    0x7F
+  46          返回值：无
+  47          *****************************************************/
+  48          void Config18B20(unsigned char dat)
+  49          {
+  50   1        bit ack;
+  51   1        ack = OneWireRst();//1、初始化
+  52   1        if (ack == 0)
+  53   1        {
+  54   2          WriteOneWire(SKIP_ROM);//2、ROM指令
+C51 COMPILER V9.54   DS18B20                                                               07/18/2022 01:07:14 PAGE 2   
+
+  55   2          WriteOneWire(WRITE_REGISTER);//3、功能指令
+  56   2          WriteOneWire(0x4b);
+  57   2          WriteOneWire(0x00);
+  58   2          WriteOneWire(dat);
+  59   2        }
+  60   1        
+  61   1        ack = OneWireRst();//1、初始化
+  62   1        if (ack == 0)
+  63   1        {
+  64   2          WriteOneWire(SKIP_ROM);//2、ROM指令
+  65   2          WriteOneWire(COPY_REGISTER);//3、功能指令
+  66   2        }
+  67   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    133    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
