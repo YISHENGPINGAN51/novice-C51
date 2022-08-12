@@ -1,0 +1,6 @@
+"..\Output\main.obj",
+"..\Output\CRC16.obj",
+"..\Output\Relay.obj",
+"..\Output\uart.obj" 
+TO "..\Output\RELAY" 
+PRINT("..\Listing\RELAY.m51")
