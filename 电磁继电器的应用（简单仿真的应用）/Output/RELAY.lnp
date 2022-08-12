@@ -1,0 +1,3 @@
+"..\Output\main.obj" 
+TO "..\Output\RELAY" 
+PRINT("..\Listing\RELAY.m51")

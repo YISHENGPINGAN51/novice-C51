@@ -1,0 +1,48 @@
+C51 COMPILER V9.54   MAIN                                                                  08/06/2022 11:43:32 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit RELAY0 = P1^0;
+   4          sbit RELAY1 = P1^1;
+   5          sbit RELAY2 = P1^2;
+   6          sbit RELAY3 = P1^3;
+   7          sbit RELAY4 = P1^4;
+   8          
+   9          void main()
+  10          {
+  11   1        RELAY0 = 1;
+  12   1        RELAY1 = 0;
+  13   1        RELAY2 = 0;
+  14   1        RELAY3 = 0;
+  15   1        RELAY4 = 0;
+  16   1        while (1)
+  17   1        {
+  18   2          RELAY0 = 0;
+  19   2          RELAY1 = 1;
+  20   2          RELAY2 = 1;
+  21   2          RELAY3 = 1;
+  22   2          RELAY4 = 1;
+  23   2        }
+  24   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     22    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
