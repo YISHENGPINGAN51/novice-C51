@@ -1,0 +1,5 @@
+"..\Output\main.obj",
+"..\Output\uart.obj",
+"..\Output\uart2.obj" 
+TO "..\Output\uart2" 
+PRINT("..\Listing\uart2.m51")

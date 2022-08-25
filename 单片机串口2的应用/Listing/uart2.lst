@@ -1,0 +1,73 @@
+C51 COMPILER V9.54   UART2                                                                 08/24/2022 14:37:43 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE UART2
+OBJECT MODULE PLACED IN ..\Output\uart2.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\uart2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\L
+                    -isting\uart2.lst) TABS(2) OBJECT(..\Output\uart2.obj)
+
+line level    source
+
+   1          #include "uart2.h"
+   2          #include "uart.h"
+   3          
+   4          void Uart2Init(void)    //9600bps@11.0592MHz
+   5          {
+   6   1        AUXR &= 0xF7;   //波特率不倍速
+   7   1        S2CON = 0x50;   //8位数据,可变波特率
+   8   1        AUXR &= 0xFB;   //定时器时钟12T模式
+   9   1        BRT = 0xFD;   //设置定时重载值
+  10   1        AUXR |= 0x10;   //启动独立波特率发射器
+  11   1        IE2 = 0x01;             //使能UART2中断
+  12   1      }
+  13          
+  14          void sendByte2(unsigned char dat)
+  15          {
+  16   1        S2BUF = dat;
+  17   1        while (!(S2CON & S2TI));
+  18   1        S2CON &= ~S2TI;     //Clear transmit interrupt flag
+  19   1      }
+  20          
+  21          //串口2发送字符串
+  22          void sendString2(unsigned char *dat)//Hello World!
+  23          {
+  24   1        while (*dat != '\0')
+  25   1        {
+  26   2          sendByte2(*dat++);
+  27   2        }
+  28   1      }
+  29          
+  30          #if 1
+  31          char putchar(char c)
+  32          {
+  33   1        sendByte2(c);
+  34   1        return c;
+  35   1      }
+  36          #endif
+  37          
+  38          void uart2_ISR() interrupt 8
+  39          {
+  40   1        unsigned char dat;
+  41   1        if (S2CON & S2RI)
+  42   1        {
+  43   2          S2CON &= ~S2RI;     //Clear receive interrupt flag
+  44   2          dat = S2BUF;        //串口2读取一个字节
+  45   2          sendByte(dat);      //通过串口1转发
+  46   2        }
+  47   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    142    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   UART2                                                                 08/24/2022 14:37:43 PAGE 2   
+
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
