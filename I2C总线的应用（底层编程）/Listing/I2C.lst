@@ -1,0 +1,76 @@
+C51 COMPILER V9.54   I2C                                                                   11/04/2022 19:20:39 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN ..\Output\I2C.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\I2C.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Lis
+                    -ting\I2C.lst) TABS(2) OBJECT(..\Output\I2C.obj)
+
+line level    source
+
+   1          #include "I2C.h"
+   2          
+   3          void I2CStart()
+   4          {
+   5   1        I2C_SCL = 1;//总线空闲时 SCL SDA 都为高电平 
+   6   1        I2C_SDA = 1;
+   7   1        I2CDelay();//SCL保持4.7us之后，拉低SDA，产生起始信号
+   8   1        I2C_SDA = 0;
+   9   1        I2CDelay();
+  10   1        I2C_SCL = 0;
+  11   1      }
+  12          
+  13          void I2CWriteByte(unsigned char dat)
+  14          {
+  15   1        unsigned char temp;
+  16   1        for (temp = 0x80; temp != 0; temp >>= 1)
+  17   1        {
+  18   2          if( (temp & dat) == 0) //当前位为0
+  19   2            I2C_SDA = 0;
+  20   2          else                   //当前位为1
+  21   2            I2C_SDA = 1;
+  22   2          I2CDelay();//延时至少4us 使SCL保持低
+  23   2          I2C_SCL = 1;//拉高 器件读数据位
+  24   2          I2CDelay();//延时至少4us 使SCL保持高
+  25   2          I2C_SCL = 0;//拉低
+  26   2        }
+  27   1      }
+  28          
+  29          bit I2CRecvAck()
+  30          {
+  31   1        bit ack;
+  32   1        I2C_SDA = 1;//主机主动释放SDA，为读ack做准备
+  33   1        I2CDelay();//SCL保持4.7us低
+  34   1        I2C_SCL = 1;//拉高
+  35   1        ack = I2C_SDA;
+  36   1        I2CDelay();//延时至少4us 使SCL保持高
+  37   1        I2C_SCL = 0;//拉低SCL
+  38   1        return ack;
+  39   1      }
+  40          
+  41          void I2CStop()
+  42          {
+  43   1        I2C_SCL = 0;
+  44   1        I2C_SDA = 0;
+  45   1        I2CDelay();
+  46   1        I2C_SCL = 1;
+  47   1        I2CDelay();
+  48   1        I2C_SDA = 1;
+  49   1        I2CDelay();
+  50   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     92    ----
+C51 COMPILER V9.54   I2C                                                                   11/04/2022 19:20:39 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
