@@ -1,0 +1,7 @@
+"..\Output\LCD1602.obj",
+"..\Output\main.obj",
+"..\Output\delay.obj",
+"..\Output\I2C.obj",
+"..\Output\EEPROM.obj" 
+TO "..\Output\I2C" 
+PRINT("..\Listing\I2C.m51")

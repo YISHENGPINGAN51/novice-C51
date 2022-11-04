@@ -1,0 +1,78 @@
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 20:47:44 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "I2C.h"
+   3          #include "delay.h"
+   4          #include "LCD1602.h"
+   5          #include "EEPROM.h"
+   6          
+   7          void numTohexStr(unsigned char dat, unsigned char *str);
+   8          
+   9          void main()
+  10          {
+  11   1        unsigned char dat;
+  12   1        unsigned char str[5];
+  13   1        LCDInit();
+  14   1        DelayXms(10);
+  15   1        //dat = 0xFF;//复原实验现象
+  16   1        dat = E2ReadByte(0x50, 0x20);
+  17   1        LCDSetPosition(0, 0);
+  18   1        LCDWriteData(dat/100 + '0');
+  19   1        LCDWriteData(dat/10%10 + '0');
+  20   1        LCDWriteData(dat%10 + '0');
+  21   1      
+  22   1        numTohexStr(dat, str);
+  23   1        LCDShowStr(5, 0, str);
+  24   1      
+  25   1        dat++;
+  26   1        E2WriteByte(0x50, 0x20, dat);
+  27   1        LCDSetPosition(0, 1);
+  28   1        LCDWriteData(dat/100 + '0');
+  29   1        LCDWriteData(dat/10%10 + '0');
+  30   1        LCDWriteData(dat%10 + '0');
+  31   1        
+  32   1        numTohexStr(dat, str);
+  33   1        LCDShowStr(5, 1, str);
+  34   1        while (1);
+  35   1      }
+  36          
+  37          //数据转十六进制数据显示的函数
+  38          void numTohexStr(unsigned char dat, unsigned char *str)
+  39          {
+  40   1        unsigned char tmp;
+  41   1        tmp = dat >> 4;//0xff
+  42   1        if (tmp <= 9)
+  43   1          *str++ = tmp + '0';
+  44   1        else
+  45   1          *str++ = tmp + '7';//tmp - 10 + 'A'
+  46   1        tmp = dat & 0x0F;
+  47   1        if (tmp <= 9)
+  48   1          *str++ = tmp + '0';
+  49   1        else
+  50   1          *str++ = tmp + '7';//tmp - 10 + 'A'
+  51   1        *str = '\0';
+  52   1      }
+
+
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 20:47:44 PAGE 2   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    284    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
