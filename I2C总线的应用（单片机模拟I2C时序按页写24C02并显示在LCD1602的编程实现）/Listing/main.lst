@@ -1,0 +1,86 @@
+C51 COMPILER V9.54   MAIN                                                                  11/05/2022 11:43:26 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\Source\main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(..\Li
+                    -sting\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "I2C.h"
+   3          #include "delay.h"
+   4          #include "LCD1602.h"
+   5          #include "EEPROM.h"
+   6          
+   7          void bufTohexStr(unsigned char *buf, unsigned char len, unsigned char *str);
+   8          
+   9          void main()
+  10          {
+  11   1        unsigned char i;
+  12   1        unsigned char str[40];
+  13   1        unsigned char buf[10];//0xff, 0x12, 0xff
+  14   1        LCDInit();
+  15   1        DelayXms(10);
+  16   1        
+  17   1        E2Read(0x51, 0x10, buf, 10);
+  18   1      
+  19   1        bufTohexStr(buf, 10, str);
+  20   1        LCDShowStr(1, 0, str);
+  21   1        
+  22   1        for (i = 0; i < sizeof(buf); i++)
+  23   1        {
+  24   2          buf[i] = buf[i] + 1;
+  25   2        }
+  26   1        E2Write(0x51, 0x10, buf, 10);
+  27   1        
+  28   1        for (i = 0; i < sizeof(buf); i++)
+  29   1        {
+  30   2          buf[i] = buf[i] + 1;
+  31   2        }
+  32   1        E2WritePage(0x51, 0x10, buf, 10);
+  33   1        while (1)
+  34   1        {
+  35   2          LCDWriteCmd(LCD_DIS_MOVE_LEFT);
+  36   2          DelayXms(2000);
+  37   2        }
+  38   1      }
+  39          
+  40          //数据缓冲区中的数据转十六进制数据显示，并保存在str[]中
+  41          void bufTohexStr(unsigned char *buf, unsigned char len, unsigned char *str)
+  42          {
+  43   1        unsigned char tmp;
+  44   1        unsigned char i;
+  45   1        for (i = 0; i < len; i++)
+  46   1        {
+  47   2          tmp = buf[i] >> 4;//0xff
+  48   2          if (tmp <= 9)
+  49   2            *str++ = tmp + '0';
+  50   2          else
+  51   2            *str++ = tmp + '7';//tmp - 10 + 'A'
+  52   2          tmp = buf[i] & 0x0F;
+  53   2          if (tmp <= 9)
+  54   2            *str++ = tmp + '0';
+C51 COMPILER V9.54   MAIN                                                                  11/05/2022 11:43:26 PAGE 2   
+
+  55   2          else
+  56   2            *str++ = tmp + '7';//tmp - 10 + 'A'
+  57   2          *str++ = ' ';//每处理完一个字节的数据加一个空格隔开
+  58   2        }
+  59   1        *(str) = '\0';
+  60   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    301    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      57
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
